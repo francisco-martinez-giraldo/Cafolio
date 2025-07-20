@@ -37,7 +37,7 @@ export function LoginForm() {
             />
           </div>
 
-          <Button type="submit" disabled={!email} variant="outline" className="w-full">
+          <Button type="submit" disabled={!email} className="w-full">
             Ingresar
           </Button>
         </form>
