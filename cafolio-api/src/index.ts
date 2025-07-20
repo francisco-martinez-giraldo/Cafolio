@@ -3,6 +3,7 @@ import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import { specs } from './config/swagger';
 import { dictionaryRoutes } from './features/dictionary/dictionary.routes';
+import { coffeesRoutes } from './features/coffees/coffees.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,6 +13,7 @@ app.use(express.json());
 
 // API Routes
 app.use('/api/dictionary', dictionaryRoutes);
+app.use('/api/coffees', coffeesRoutes);
 
 // Swagger Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));

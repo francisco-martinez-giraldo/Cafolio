@@ -1,5 +1,5 @@
 -- Cafolio Database Schema
-DROP TABLE IF EXISTS coffee;
+DROP TABLE IF EXISTS coffees;
 DROP TABLE IF EXISTS dictionary;
 
 CREATE TABLE dictionary (
@@ -78,3 +78,49 @@ INSERT INTO dictionary (type, value, image_url) VALUES
 ('grind', 'Media-fina', NULL),
 ('grind', 'Fina', NULL),
 ('grind', 'Extrafina', NULL);
+
+-- COFFEES TABLE
+CREATE TABLE coffees (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id varchar(100) NOT NULL,                    -- FK to users table
+    brand_dictionary_id UUID NOT NULL,        -- FK to dictionary (type = 'brand')
+    variety_dictionary_id UUID NOT NULL,      -- FK to dictionary (type = 'variety')
+    process_dictionary_id UUID NOT NULL,      -- FK to dictionary (type = 'process')
+    photo_path TEXT NOT NULL,                 -- local image path
+    region VARCHAR(100),                      -- optional
+    farm VARCHAR(100),                        -- optional
+    price NUMERIC(10,2),                      -- optional, price in local currency
+    notes TEXT,                               -- optional
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    CONSTRAINT fk_brand_dictionary
+        FOREIGN KEY (brand_dictionary_id) REFERENCES dictionary(id),
+    CONSTRAINT fk_variety_dictionary
+        FOREIGN KEY (variety_dictionary_id) REFERENCES dictionary(id),
+    CONSTRAINT fk_process_dictionary
+        FOREIGN KEY (process_dictionary_id) REFERENCES dictionary(id)
+);
+
+-- SAMPLE COFFEE DATA
+INSERT INTO coffees (
+    id,
+    user_id,
+    brand_dictionary_id,
+    variety_dictionary_id,
+    process_dictionary_id,
+    photo_path,
+    region,
+    farm,
+    price,
+    notes
+) VALUES (
+    gen_random_uuid(),
+    'fram07@gmail',
+    (SELECT id FROM dictionary WHERE type = 'brand' AND value = 'Hemisferio'),
+    (SELECT id FROM dictionary WHERE type = 'variety' AND value = 'Geisha'),
+    (SELECT id FROM dictionary WHERE type = 'process' AND value = 'Natural'),
+    '/ruta/local/imagen.jpg',
+    'Huila',
+    'Finca La Esperanza',
+    55000,
+    'Notas a frutos amarillos y miel.'
+);
