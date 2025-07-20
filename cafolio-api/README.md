@@ -32,11 +32,21 @@ npm install
 
 ## Endpoints
 
+### Autenticación
+- `POST /api/auth/login` - Iniciar sesión o registrarse con magic link
+
+### Diccionario
 - `GET /api/dictionary?type=variety` - Obtener elementos del diccionario por tipo
 - `GET /api/dictionary/types` - Obtener todos los tipos disponibles
 - `POST /api/dictionary` - Crear nuevo elemento del diccionario
 - `PUT /api/dictionary/:id` - Actualizar elemento del diccionario
 - `DELETE /api/dictionary/:id` - Eliminar elemento del diccionario
+
+### Cafés
+- `GET /api/coffees` - Obtener lista de cafés
+- `POST /api/coffees` - Crear nuevo café
+- `PUT /api/coffees/:id` - Actualizar café
+- `DELETE /api/coffees/:id` - Eliminar café
 
 ### Tipos disponibles:
 - `brand` - Marcas de café
@@ -56,9 +66,11 @@ Accede a la documentación interactiva en: `http://localhost:3000/api-docs`
 ```
 cafolio-api/
 ├── src/
-│   ├── config/          # Configuraciones
+│   ├── config/          # Configuraciones (Supabase, Swagger)
 │   ├── features/        # Módulos por característica
-│   │   └── dictionary/  # Funcionalidad del diccionario
-│   └── types/           # Definiciones de tipos
+│   │   ├── auth/        # Autenticación con magic links
+│   │   ├── coffees/     # Gestión de cafés
+│   │   └── dictionary/  # Diccionario de datos
+│   └── types/           # Definiciones de tipos TypeScript
 └── tests/               # Pruebas unitarias
 ```

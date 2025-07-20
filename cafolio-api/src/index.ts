@@ -4,6 +4,7 @@ import swaggerUi from 'swagger-ui-express';
 import { specs } from './config/swagger';
 import { dictionaryRoutes } from './features/dictionary/dictionary.routes';
 import { coffeesRoutes } from './features/coffees/coffees.routes';
+import authRoutes from './features/auth/auth.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // API Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/dictionary', dictionaryRoutes);
 app.use('/api/coffees', coffeesRoutes);
 

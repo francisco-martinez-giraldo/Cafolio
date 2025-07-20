@@ -15,7 +15,7 @@ const options = {
       },
     ],
   },
-  apis: ['./src/features/**/*.controller.ts'],
+  apis: ['./src/features/**/*.controller.ts', './src/features/**/*.routes.ts'],
 };
 
 export const specs = swaggerJsdoc(options);
