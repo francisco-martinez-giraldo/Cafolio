@@ -18,5 +18,5 @@ export default function LoginPage() {
     router.push("/home");
   };
 
-  return <DictionaryExample />;
+  return <CoffeeExample />;
 }

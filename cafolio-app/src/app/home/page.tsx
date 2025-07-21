@@ -1,6 +1,10 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { CoffeeCard, CoffeeCardProps } from "@/components/CoffeeCard";
 import { CoffeeCardNew } from "@/components/CoffeeCardNew";
+import { useAuth } from "@/contexts/AuthContext";
+import { LogOut } from "lucide-react";
 
 const coffees: CoffeeCardProps[] = [
   {
@@ -25,15 +29,22 @@ const coffees: CoffeeCardProps[] = [
 ];
 
 export default function HomePage() {
+  const { user, logout } = useAuth();
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto">
         {/* Header con logo */}
         <div className="flex items-center justify-between mb-6">
           <span className="text-xs">Cafolio</span>
-          <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-            <span className="text-xs">⚙️</span>
-          </div>
+          <Button 
+            onClick={logout}
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-full"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
 
         {/* Título */}

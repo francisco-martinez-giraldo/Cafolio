@@ -1,9 +1,12 @@
 import { apiClient } from '@/lib/api';
+import { getUser } from '@/lib/auth';
 import { Coffee, CreateCoffeeRequest, UpdateCoffeeRequest } from '@/types/api';
 
 export const coffeesService = {
   getRecent: async (): Promise<Coffee[]> => {
-    const { data } = await apiClient.get('/api/coffees/recent?user_id=fram07@gmail.com');
+    const user = getUser();
+    const userEmail = user?.email || '';
+    const { data } = await apiClient.get(`/api/coffees/recent?user_id=${userEmail}`);
     return data;
   },
 
