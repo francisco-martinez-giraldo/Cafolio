@@ -12,7 +12,9 @@ export const coffeesService = {
   },
 
   getById: async (id: string): Promise<Coffee> => {
-    const { data } = await apiClient.get(`/api/coffees/${id}`);
+    const user = getUser();
+    const userEmail = user?.email || "";
+    const { data } = await apiClient.get(`/api/coffees/${id}?user_id=${userEmail}`);
     return data;
   },
 

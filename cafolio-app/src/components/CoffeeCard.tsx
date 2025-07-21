@@ -2,19 +2,28 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export interface CoffeeCardProps {
+  id?: string;
   brand: string;
   variety: string;
   overallRating: number;
   imageUrl?: string;
 }
 
-export function CoffeeCard({ brand, variety, overallRating, imageUrl }: CoffeeCardProps) {
+export function CoffeeCard({ id, brand, variety, overallRating, imageUrl }: CoffeeCardProps) {
   const [imageLoading, setImageLoading] = useState(true);
+  const router = useRouter();
+
+  const handleClick = () => {
+    if (id) {
+      router.push(`/newProcess?coffeeId=${id}`);
+    }
+  };
 
   return (
-    <Card className="p-3 cursor-pointer hover:bg-accent/50 transition-colors">
+    <Card className="p-3 cursor-pointer hover:bg-accent/50 transition-colors" onClick={handleClick}>
       <div className="aspect-square bg-muted rounded-md mb-2 flex items-center justify-center relative">
         {imageUrl ? (
           <>

@@ -37,6 +37,7 @@ export default function HomePage() {
         {coffees?.map((coffee) => (
           <CoffeeCard
             key={coffee.id}
+            id={coffee.id}
             brand={coffee.brand?.value || "Sin marca"}
             variety={coffee.variety?.value || "Sin variedad"}
             overallRating={coffee.overall_rating || 0}
@@ -48,7 +49,7 @@ export default function HomePage() {
 
       {/* Botón Ver más */}
       <div className="text-center">
-        <Button>Ver más</Button>
+        <Button className="cursor-pointer ">Ver más</Button>
       </div>
     </>
   );

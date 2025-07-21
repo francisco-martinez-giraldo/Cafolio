@@ -24,6 +24,8 @@ export default function LoginPage() {
           {/* < className="text-2xl">Cafolio</> */}
           <div className="">
             <Image
+              width={256}
+              height={256}
               src="/Cafolio/Cafolio-Fondo.png"
               alt="Cafolio Logo"
               className="mx-auto h-64 w-auto rounded-md"
