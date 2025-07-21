@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { DictionarySelect } from "@/components/ui/DictionarySelect";
 import { Camera } from "lucide-react";
 import { useCreateCoffee } from "@/hooks/useCoffees";
+import { useUploadImage } from "@/hooks/useStorage";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Form,
@@ -36,10 +37,12 @@ const FormSchema = z.object({
 
 export function CoffeeForm() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { user } = useAuth();
   const createCoffee = useCreateCoffee();
+  const uploadImage = useUploadImage();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -74,37 +77,42 @@ export function CoffeeForm() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
         setImagePreview(result);
-        form.setValue("image", result);
+        form.setValue("image", "selected"); // Just mark as selected
       };
       reader.readAsDataURL(file);
     }
   };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    if (!user?.email) return;
-
-    const coffeeData: CreateCoffeeRequest = {
-      user_id: user.email,
-      brand_dictionary_id: data.brand,
-      variety_dictionary_id: data.variety,
-      process_dictionary_id: data.process,
-      price: Number(data.price.replace(/[^\d]/g, "")), // Remove $ and dots and convert to number
-      region: data.region || "",
-      farm: data.finca || "",
-      notes: data.notes || "",
-      photo_path:
-        "https://differentecoffee.com/wp-content/uploads/2025/05/FRUTTI-TUTTI-300x300.jpeg", //TODO: LLamar a una API subir la imagen que me devuelva la url y pegarla aca data.image,
-    };
+    if (!user?.email || !selectedFile) return;
 
     try {
+      // First upload the image
+      const uploadResult = await uploadImage.mutateAsync(selectedFile);
+
+      // Then create the coffee with the uploaded image URL
+      const coffeeData: CreateCoffeeRequest = {
+        user_id: user.email,
+        brand_dictionary_id: data.brand,
+        variety_dictionary_id: data.variety,
+        process_dictionary_id: data.process,
+        price: Number(data.price.replace(/[^\d]/g, "")),
+        region: data.region || "",
+        farm: data.finca || "",
+        notes: data.notes || "",
+        photo_path: uploadResult.url,
+      };
+
       await createCoffee.mutateAsync(coffeeData);
       router.push("/home");
     } catch (error) {
-      console.error("Error creating coffee:", error);
+      console.error("Error:", error);
+      // Error handling is done through the form state
     }
   };
 
@@ -282,10 +290,24 @@ export function CoffeeForm() {
           <Button
             type="submit"
             className="w-full mt-6 cursor-pointer"
-            disabled={createCoffee.isPending}
+            disabled={uploadImage.isPending || createCoffee.isPending}
           >
-            {createCoffee.isPending ? "Guardando..." : "Guardar Café"}
+            {uploadImage.isPending
+              ? "Subiendo imagen..."
+              : createCoffee.isPending
+              ? "Guardando café..."
+              : "Guardar Café"}
           </Button>
+
+          {(uploadImage.error || createCoffee.error) && (
+            <div className="text-sm text-destructive mt-2 text-center">
+              {uploadImage.error
+                ? "Error al subir la imagen. Intenta nuevamente."
+                : createCoffee.error
+                ? "Error al guardar el café. Intenta nuevamente."
+                : ""}
+            </div>
+          )}
         </form>
       </div>
     </Form>
