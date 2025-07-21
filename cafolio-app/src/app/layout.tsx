@@ -34,7 +34,7 @@ export default function RootLayout({
             <AuthGuard>
               <ThemeProvider
                 attribute="class"
-                defaultTheme="Light"
+                defaultTheme="System"
                 enableSystem
                 disableTransitionOnChange
               >
