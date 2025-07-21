@@ -1,4 +1,4 @@
-import { Coffee, CreateCoffeeRequest, UpdateCoffeeRequest } from '../../types';
+import { Coffee, CreateCoffeeRequest, UpdateCoffeeRequest } from "../../types";
 export declare class CoffeesService {
     getByUserId(userId: string, limit?: number): Promise<Coffee[]>;
     getById(id: string, userId: string): Promise<Coffee | null>;

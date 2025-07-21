@@ -1,30 +1,32 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { CoffeeCard, CoffeeCardProps } from "@/components/CoffeeCard";
 import { CoffeeCardNew } from "@/components/CoffeeCardNew";
-
-const coffees: CoffeeCardProps[] = [
-  {
-    brand: "MARCA",
-    variety: "VARIEDAD",
-    overallRating: 5,
-    imageUrl: "https://puristcafe.co/cdn/shop/files/IMG-0084.heic?v=1752784565",
-  },
-  {
-    brand: "MARCA",
-    variety: "VARIEDAD",
-    overallRating: 4,
-    imageUrl: "https://differentecoffee.com/wp-content/uploads/2025/05/FRUTTI-TUTTI-300x300.jpeg",
-  },
-  {
-    brand: "MARCA",
-    variety: "VARIEDAD",
-    overallRating: 4,
-    imageUrl:
-      "https://differentecoffee.com/wp-content/uploads/2025/02/banner-producto-combo-differente-coffee-x2-600x600.webp",
-  },
-];
+import { useRecentCoffees } from "@/hooks/useCoffees";
 
 export default function HomePage() {
+  const MAX_INITIAL_COFFEES = 3; // Limite inicial de cafés a mostrar
+  const { data: coffees, isLoading, error } = useRecentCoffees(MAX_INITIAL_COFFEES);
+
+  if (isLoading) {
+    return (
+      <>
+        <h1 className="text-2xl font-bold mb-6">Mis Cafés</h1>
+        <div className="text-center">Cargando...</div>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <h1 className="text-2xl font-bold mb-6">Mis Cafés</h1>
+        <div className="text-center text-destructive">Error cargando cafés</div>
+      </>
+    );
+  }
+
   return (
     <>
       {/* Título */}
@@ -32,13 +34,13 @@ export default function HomePage() {
 
       {/* Grid de cafés */}
       <div className="grid grid-cols-2 gap-3 mb-8">
-        {coffees.map((coffee, index) => (
+        {coffees?.map((coffee) => (
           <CoffeeCard
-            key={index}
-            brand={coffee.brand}
-            variety={coffee.variety}
-            overallRating={coffee.overallRating}
-            imageUrl={coffee.imageUrl}
+            key={coffee.id}
+            brand={coffee.brand?.value || "Sin marca"}
+            variety={coffee.variety?.value || "Sin variedad"}
+            overallRating={coffee.overall_rating || 0}
+            imageUrl={coffee.photo_path || ""}
           />
         ))}
         <CoffeeCardNew />

@@ -4,12 +4,15 @@ import { useState, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { DictionarySelect } from "@/components/ui/DictionarySelect";
 import { Camera } from "lucide-react";
+import { useCreateCoffee } from "@/hooks/useCoffees";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Form,
   FormControl,
@@ -18,6 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { CreateCoffeeRequest } from "@/types/api";
 
 const FormSchema = z.object({
   brand: z.string().min(1, "La marca es obligatoria"),
@@ -33,6 +37,9 @@ const FormSchema = z.object({
 export function CoffeeForm() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const { user } = useAuth();
+  const createCoffee = useCreateCoffee();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -77,8 +84,28 @@ export function CoffeeForm() {
     }
   };
 
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    console.log("Coffee data:", data);
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    if (!user?.email) return;
+
+    const coffeeData: CreateCoffeeRequest = {
+      user_id: user.email,
+      brand_dictionary_id: data.brand,
+      variety_dictionary_id: data.variety,
+      process_dictionary_id: data.process,
+      price: Number(data.price.replace(/[^\d]/g, "")), // Remove $ and dots and convert to number
+      region: data.region || "",
+      farm: data.finca || "",
+      notes: data.notes || "",
+      photo_path:
+        "https://differentecoffee.com/wp-content/uploads/2025/05/FRUTTI-TUTTI-300x300.jpeg", //TODO: LLamar a una API subir la imagen que me devuelva la url y pegarla aca data.image,
+    };
+
+    try {
+      await createCoffee.mutateAsync(coffeeData);
+      router.push("/home");
+    } catch (error) {
+      console.error("Error creating coffee:", error);
+    }
   };
 
   return (
@@ -252,8 +279,12 @@ export function CoffeeForm() {
             )}
           />
 
-          <Button type="submit" className="w-full mt-6 cursor-pointer">
-            Guardar Café
+          <Button
+            type="submit"
+            className="w-full mt-6 cursor-pointer"
+            disabled={createCoffee.isPending}
+          >
+            {createCoffee.isPending ? "Guardando..." : "Guardar Café"}
           </Button>
         </form>
       </div>

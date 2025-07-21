@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { CoffeesService } from './coffees.service';
+import { Request, Response } from "express";
+import { CoffeesService } from "./coffees.service";
 
 export class CoffeesController {
   private coffeesService = new CoffeesService();
@@ -32,7 +32,7 @@ export class CoffeesController {
     try {
       const { user_id, limit } = req.query;
       if (!user_id) {
-        return res.status(400).json({ error: 'user_id is required' });
+        return res.status(400).json({ error: "user_id is required" });
       }
 
       const coffees = await this.coffeesService.getByUserId(
@@ -41,7 +41,7 @@ export class CoffeesController {
       );
       res.json(coffees);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch coffees' });
+      res.status(500).json({ error: "Failed to fetch coffees" });
     }
   }
 
@@ -74,18 +74,18 @@ export class CoffeesController {
     try {
       const { id } = req.params;
       const { user_id } = req.query;
-      
+
       if (!user_id) {
-        return res.status(400).json({ error: 'user_id is required' });
+        return res.status(400).json({ error: "user_id is required" });
       }
 
       const coffee = await this.coffeesService.getById(id, user_id as string);
       if (!coffee) {
-        return res.status(404).json({ error: 'Coffee not found' });
+        return res.status(404).json({ error: "Coffee not found" });
       }
       res.json(coffee);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch coffee' });
+      res.status(500).json({ error: "Failed to fetch coffee" });
     }
   }
 
@@ -137,7 +137,8 @@ export class CoffeesController {
       const coffee = await this.coffeesService.create(req.body);
       res.status(201).json(coffee);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to create coffee' });
+      console.log(error);
+      res.status(500).json({ error: "Failed to create coffee" });
     }
   }
 
@@ -236,15 +237,15 @@ export class CoffeesController {
     try {
       const { id } = req.params;
       const { user_id } = req.query;
-      
+
       if (!user_id) {
-        return res.status(400).json({ error: 'user_id is required' });
+        return res.status(400).json({ error: "user_id is required" });
       }
 
       const coffee = await this.coffeesService.update(id, user_id as string, req.body);
       res.json(coffee);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to update coffee' });
+      res.status(500).json({ error: "Failed to update coffee" });
     }
   }
 
@@ -284,15 +285,15 @@ export class CoffeesController {
     try {
       const { id } = req.params;
       const { user_id } = req.query;
-      
+
       if (!user_id) {
-        return res.status(400).json({ error: 'user_id is required' });
+        return res.status(400).json({ error: "user_id is required" });
       }
 
       await this.coffeesService.delete(id, user_id as string);
       res.status(204).send();
     } catch (error) {
-      res.status(500).json({ error: 'Failed to delete coffee' });
+      res.status(500).json({ error: "Failed to delete coffee" });
     }
   }
 
@@ -323,7 +324,7 @@ export class CoffeesController {
     try {
       const { user_id, limit } = req.query;
       if (!user_id) {
-        return res.status(400).json({ error: 'user_id is required' });
+        return res.status(400).json({ error: "user_id is required" });
       }
 
       const coffees = await this.coffeesService.getRecent(
@@ -332,7 +333,7 @@ export class CoffeesController {
       );
       res.json(coffees);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch recent coffees' });
+      res.status(500).json({ error: "Failed to fetch recent coffees" });
     }
   }
 }

@@ -1,12 +1,13 @@
-import { apiClient } from '@/lib/api';
-import { getUser } from '@/lib/auth';
-import { Coffee, CreateCoffeeRequest, UpdateCoffeeRequest } from '@/types/api';
+import { apiClient } from "@/lib/api";
+import { getUser } from "@/lib/auth";
+import { Coffee, CreateCoffeeRequest, UpdateCoffeeRequest } from "@/types/api";
 
 export const coffeesService = {
-  getRecent: async (): Promise<Coffee[]> => {
+  getRecent: async (limit?: number): Promise<Coffee[]> => {
     const user = getUser();
-    const userEmail = user?.email || '';
-    const { data } = await apiClient.get(`/api/coffees/recent?user_id=${userEmail}`);
+    const userEmail = user?.email || "";
+    const limitParam = limit ? `&limit=${limit}` : "";
+    const { data } = await apiClient.get(`/api/coffees/recent?user_id=${userEmail}${limitParam}`);
     return data;
   },
 
@@ -21,7 +22,7 @@ export const coffeesService = {
   },
 
   create: async (coffee: CreateCoffeeRequest): Promise<Coffee> => {
-    const { data } = await apiClient.post('/api/coffees', coffee);
+    const { data } = await apiClient.post("/api/coffees", coffee);
     return data;
   },
 

@@ -14,7 +14,14 @@ export interface CreateDictionaryRequest {
   order_index?: number;
 }
 
-export type DictionaryType = 'brand' | 'variety' | 'process' | 'method' | 'temperature' | 'ratio' | 'grind';
+export type DictionaryType =
+  | "brand"
+  | "variety"
+  | "process"
+  | "method"
+  | "temperature"
+  | "ratio"
+  | "grind";
 
 export interface Coffee {
   id: string;
@@ -27,7 +34,11 @@ export interface Coffee {
   farm?: string;
   price?: number;
   notes?: string;
+  overall_rating?: number;
   created_at: string;
+  brand?: DictionaryItem;
+  variety?: DictionaryItem;
+  process?: DictionaryItem;
 }
 
 export interface CreateCoffeeRequest {

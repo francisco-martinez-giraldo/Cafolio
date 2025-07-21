@@ -1,13 +1,20 @@
-import { supabase } from '../../config/supabase';
-import { Coffee, CreateCoffeeRequest, UpdateCoffeeRequest } from '../../types';
+import { supabase } from "../../config/supabase";
+import { Coffee, CreateCoffeeRequest, UpdateCoffeeRequest } from "../../types";
 
 export class CoffeesService {
   async getByUserId(userId: string, limit?: number): Promise<Coffee[]> {
     let query = supabase
-      .from('coffees')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .from("coffees")
+      .select(
+        `
+        *,
+        brand:dictionary!brand_dictionary_id(*),
+        variety:dictionary!variety_dictionary_id(*),
+        process:dictionary!process_dictionary_id(*)
+      `
+      )
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
 
     if (limit) {
       query = query.limit(limit);
@@ -20,10 +27,17 @@ export class CoffeesService {
 
   async getById(id: string, userId: string): Promise<Coffee | null> {
     const { data, error } = await supabase
-      .from('coffees')
-      .select('*')
-      .eq('id', id)
-      .eq('user_id', userId)
+      .from("coffees")
+      .select(
+        `
+        *,
+        brand:dictionary!brand_dictionary_id(*),
+        variety:dictionary!variety_dictionary_id(*),
+        process:dictionary!process_dictionary_id(*)
+      `
+      )
+      .eq("id", id)
+      .eq("user_id", userId)
       .single();
 
     if (error) throw error;
@@ -31,11 +45,7 @@ export class CoffeesService {
   }
 
   async create(coffee: CreateCoffeeRequest): Promise<Coffee> {
-    const { data, error } = await supabase
-      .from('coffees')
-      .insert([coffee])
-      .select()
-      .single();
+    const { data, error } = await supabase.from("coffees").insert([coffee]).select().single();
 
     if (error) throw error;
     return data;
@@ -43,10 +53,10 @@ export class CoffeesService {
 
   async update(id: string, userId: string, updates: UpdateCoffeeRequest): Promise<Coffee> {
     const { data, error } = await supabase
-      .from('coffees')
+      .from("coffees")
       .update(updates)
-      .eq('id', id)
-      .eq('user_id', userId)
+      .eq("id", id)
+      .eq("user_id", userId)
       .select()
       .single();
 
@@ -55,11 +65,7 @@ export class CoffeesService {
   }
 
   async delete(id: string, userId: string): Promise<void> {
-    const { error } = await supabase
-      .from('coffees')
-      .delete()
-      .eq('id', id)
-      .eq('user_id', userId);
+    const { error } = await supabase.from("coffees").delete().eq("id", id).eq("user_id", userId);
 
     if (error) throw error;
   }
