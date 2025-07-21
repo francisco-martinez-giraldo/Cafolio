@@ -5,6 +5,7 @@ import { specs } from './config/swagger';
 import { dictionaryRoutes } from './features/dictionary/dictionary.routes';
 import { coffeesRoutes } from './features/coffees/coffees.routes';
 import authRoutes from './features/auth/auth.routes';
+import storageRoutes from './features/storage/storage.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/dictionary', dictionaryRoutes);
 app.use('/api/coffees', coffeesRoutes);
+app.use('/api/storage', storageRoutes);
 
 // Swagger Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));

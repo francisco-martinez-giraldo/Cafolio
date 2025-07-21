@@ -13,6 +13,12 @@ const options = {
             version: '1.0.0',
             description: 'Coffee portfolio management API',
         },
+        tags: [
+            {
+                name: 'Storage',
+                description: 'Image storage operations'
+            }
+        ],
         servers: [
             {
                 url: 'http://localhost:3000',

@@ -7,10 +7,10 @@ class CoffeesService {
         let query = supabase_1.supabase
             .from("coffees")
             .select(`
-        id,
-        brand:dictionary!brand_dictionary_id(id, , value, image_url,order_index),
-        variety:dictionary!variety_dictionary_id(id, value, image_url,order_index),
-        process:dictionary!process_dictionary_id(id,  value, image_url,order_index)
+        *,
+        brand:dictionary!brand_dictionary_id(*),
+        variety:dictionary!variety_dictionary_id(*),
+        process:dictionary!process_dictionary_id(*)
       `)
             .eq("user_id", userId)
             .order("created_at", { ascending: false });
@@ -26,10 +26,10 @@ class CoffeesService {
         const { data, error } = await supabase_1.supabase
             .from("coffees")
             .select(`
-         *,
-        brand:dictionary!brand_dictionary_id(id, , value, image_url,order_index),
-        variety:dictionary!variety_dictionary_id(id, value, image_url,order_index),
-        process:dictionary!process_dictionary_id(id,  value, image_url,order_index)
+        *,
+        brand:dictionary!brand_dictionary_id(*),
+        variety:dictionary!variety_dictionary_id(*),
+        process:dictionary!process_dictionary_id(*)
       `)
             .eq("id", id)
             .eq("user_id", userId)

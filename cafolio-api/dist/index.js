@@ -10,6 +10,7 @@ const swagger_1 = require("./config/swagger");
 const dictionary_routes_1 = require("./features/dictionary/dictionary.routes");
 const coffees_routes_1 = require("./features/coffees/coffees.routes");
 const auth_routes_1 = __importDefault(require("./features/auth/auth.routes"));
+const storage_routes_1 = __importDefault(require("./features/storage/storage.routes"));
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
 app.use((0, cors_1.default)({
@@ -23,6 +24,7 @@ app.use(express_1.default.json());
 app.use('/api/auth', auth_routes_1.default);
 app.use('/api/dictionary', dictionary_routes_1.dictionaryRoutes);
 app.use('/api/coffees', coffees_routes_1.coffeesRoutes);
+app.use('/api/storage', storage_routes_1.default);
 // Swagger Documentation
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.specs));
 // Health check
