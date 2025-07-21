@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['rdtutjzejojnhpcmyqqx.supabase.co']
-  }
+    remotePatterns: [new URL("https://rdtutjzejojnhpcmyqqx.supabase.co/**")],
+  },
 };
 
 export default nextConfig;

@@ -63,3 +63,40 @@ export interface UpdateCoffeeRequest {
   price?: number;
   notes?: string;
 }
+
+export interface CoffeePreparation {
+  id: string;
+  user_id: string;
+  coffee_id: string;
+  method_dictionary_id: string;
+  temperature_dictionary_id: string;
+  ratio_dictionary_id: string;
+  ranking: number;
+  notes?: string[];
+  comments?: string;
+  created_at: string;
+  coffee?: Coffee;
+  method?: DictionaryItem;
+  temperature?: DictionaryItem;
+  ratio?: DictionaryItem;
+}
+
+export interface CreateCoffeePreparationRequest {
+  user_id: string;
+  coffee_id: string;
+  method_dictionary_id: string;
+  temperature_dictionary_id: string;
+  ratio_dictionary_id: string;
+  ranking: number;
+  notes?: string[];
+  comments?: string;
+}
+
+export interface UpdateCoffeePreparationRequest {
+  method_dictionary_id?: string;
+  temperature_dictionary_id?: string;
+  ratio_dictionary_id?: string;
+  ranking?: number;
+  notes?: string[];
+  comments?: string;
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,9 @@ import { CoffeeInfo } from "@/components/CoffeeInfo";
 interface ProcessStep2Props {
   onComplete: (data: any) => void;
   selectedCoffee?: any;
+  isLoading?: boolean;
+  initialData?: any;
+  onChange?: (data: any) => void;
 }
 
 const noteOptions = [
@@ -28,15 +31,25 @@ const noteOptions = [
   "Tostado",
 ];
 
-export function ProcessStep2({ onComplete, selectedCoffee }: ProcessStep2Props) {
-  const [rating, setRating] = useState(0);
-  const [selectedNotes, setSelectedNotes] = useState<string[]>([]);
-  const [generalNotes, setGeneralNotes] = useState("");
+export function ProcessStep2({ onComplete, selectedCoffee, isLoading, initialData, onChange }: ProcessStep2Props) {
+  const [rating, setRating] = useState(initialData?.rating || 0);
+  const [selectedNotes, setSelectedNotes] = useState<string[]>(initialData?.notes || []);
+  const [generalNotes, setGeneralNotes] = useState(initialData?.generalNotes || "");
+
+  useEffect(() => {
+    if (initialData) {
+      setRating(initialData.rating || 0);
+      setSelectedNotes(initialData.notes || []);
+      setGeneralNotes(initialData.generalNotes || "");
+    }
+  }, [initialData]);
 
   const handleNoteToggle = (note: string) => {
-    setSelectedNotes((prev) =>
-      prev.includes(note) ? prev.filter((n) => n !== note) : [...prev, note]
-    );
+    const newNotes = selectedNotes.includes(note) 
+      ? selectedNotes.filter((n) => n !== note) 
+      : [...selectedNotes, note];
+    setSelectedNotes(newNotes);
+    onChange?.({ rating, notes: newNotes, generalNotes });
   };
 
   const handleSubmit = () => {
@@ -61,11 +74,18 @@ export function ProcessStep2({ onComplete, selectedCoffee }: ProcessStep2Props) 
           {[1, 2, 3, 4, 5].map((star) => (
             <div key={star} className="relative">
               <button 
-                onClick={() => setRating(star - 0.5)} 
+                onClick={() => {
+                  const newRating = star - 0.5;
+                  setRating(newRating);
+                  onChange?.({ rating: newRating, notes: selectedNotes, generalNotes });
+                }} 
                 className="absolute left-0 w-1/2 h-full z-10"
               />
               <button 
-                onClick={() => setRating(star)} 
+                onClick={() => {
+                  setRating(star);
+                  onChange?.({ rating: star, notes: selectedNotes, generalNotes });
+                }} 
                 className="absolute right-0 w-1/2 h-full z-10"
               />
               <Star
@@ -110,14 +130,18 @@ export function ProcessStep2({ onComplete, selectedCoffee }: ProcessStep2Props) 
         <Textarea
           placeholder="Escribe tus notas generales aquí..."
           value={generalNotes}
-          onChange={(e) => setGeneralNotes(e.target.value)}
+          onChange={(e) => {
+            const newValue = e.target.value;
+            setGeneralNotes(newValue);
+            onChange?.({ rating, notes: selectedNotes, generalNotes: newValue });
+          }}
           rows={4}
           className="text-sm"
         />
       </div>
 
-      <Button onClick={handleSubmit} className="w-full cursor-pointer " disabled={rating === 0}>
-        Guardar
+      <Button onClick={handleSubmit} className="w-full cursor-pointer" disabled={rating === 0 || isLoading}>
+        {isLoading ? "Guardando..." : "Guardar"}
       </Button>
     </div>
   );

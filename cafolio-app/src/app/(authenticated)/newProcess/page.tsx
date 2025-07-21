@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useCoffeeById } from "@/hooks/useCoffees";
+import { useCreateCoffeePreparation } from "@/hooks/useCoffeePreparations";
+import { getUser } from "@/lib/auth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProcessStep1 } from "@/components/ProcessSteps/ProcessStep1";
 import { ProcessStep2 } from "@/components/ProcessSteps/ProcessStep2";
@@ -43,9 +45,35 @@ export default function NewProcessPage() {
     setActiveTab("step2");
   };
 
-  const handleStep2Complete = (data: any) => {
+  const router = useRouter();
+  const createPreparation = useCreateCoffeePreparation();
+
+  const handleStep2Change = (data: any) => {
     setProcessData((prev) => ({ ...prev, ...data }));
-    console.log("Preparación guardada:", { ...processData, ...data });
+  };
+
+  const handleStep2Complete = async (data: any) => {
+    const finalData = { ...processData, ...data };
+    const user = getUser();
+    
+    if (!user?.email || !coffeeId) return;
+
+    try {
+      await createPreparation.mutateAsync({
+        user_id: user.email,
+        coffee_id: coffeeId,
+        method_dictionary_id: finalData.method,
+        temperature_dictionary_id: finalData.temperature,
+        ratio_dictionary_id: finalData.ratio,
+        ranking: finalData.rating,
+        notes: finalData.notes,
+        comments: finalData.generalNotes,
+      });
+      
+      router.push('/home');
+    } catch (error) {
+      console.error('Error saving preparation:', error);
+    }
   };
 
   return (
@@ -61,11 +89,21 @@ export default function NewProcessPage() {
         </TabsList>
 
         <TabsContent value="step1" className="mt-6">
-          <ProcessStep1 onComplete={handleStep1Complete} selectedCoffee={selectedCoffee} />
+          <ProcessStep1 
+            onComplete={handleStep1Complete} 
+            selectedCoffee={selectedCoffee}
+            initialData={processData}
+          />
         </TabsContent>
 
         <TabsContent value="step2" className="mt-6">
-          <ProcessStep2 onComplete={handleStep2Complete} selectedCoffee={selectedCoffee} />
+          <ProcessStep2 
+            onComplete={handleStep2Complete} 
+            selectedCoffee={selectedCoffee} 
+            isLoading={createPreparation.isPending}
+            initialData={processData}
+            onChange={handleStep2Change}
+          />
         </TabsContent>
       </Tabs>
     </>

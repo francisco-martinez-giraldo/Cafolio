@@ -8,14 +8,15 @@ import { DictionarySelector } from "../DictionarySelector";
 interface ProcessStep1Props {
   onComplete: (data: any) => void;
   selectedCoffee?: any;
+  initialData?: any;
 }
 
-export function ProcessStep1({ onComplete, selectedCoffee }: ProcessStep1Props) {
+export function ProcessStep1({ onComplete, selectedCoffee, initialData }: ProcessStep1Props) {
   const [formData, setFormData] = useState({
-    method: "",
-    temperature: "",
-    ratio: "",
-    grind: "",
+    method: initialData?.method || "",
+    temperature: initialData?.temperature || "",
+    ratio: initialData?.ratio || "",
+    grind: initialData?.grind || "",
   });
 
   const handleSubmit = () => {

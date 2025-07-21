@@ -4,6 +4,7 @@ import swaggerUi from 'swagger-ui-express';
 import { specs } from './config/swagger';
 import { dictionaryRoutes } from './features/dictionary/dictionary.routes';
 import { coffeesRoutes } from './features/coffees/coffees.routes';
+import { coffeePreparationsRoutes } from './features/coffee-preparations/coffee-preparations.routes';
 import authRoutes from './features/auth/auth.routes';
 import storageRoutes from './features/storage/storage.routes';
 
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/dictionary', dictionaryRoutes);
 app.use('/api/coffees', coffeesRoutes);
+app.use('/api/coffee-preparations', coffeePreparationsRoutes);
 app.use('/api/storage', storageRoutes);
 
 // Swagger Documentation
