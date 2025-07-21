@@ -137,7 +137,6 @@ export class CoffeesController {
       const coffee = await this.coffeesService.create(req.body);
       res.status(201).json(coffee);
     } catch (error) {
-      console.log(error);
       res.status(500).json({ error: "Failed to create coffee" });
     }
   }

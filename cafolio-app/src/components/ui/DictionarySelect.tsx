@@ -5,7 +5,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectLabel,
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
@@ -18,7 +17,6 @@ interface DictionarySelectProps {
   value?: string;
   onValueChange: (value: string) => void;
   placeholder?: string;
-  error?: boolean;
 }
 
 export function DictionarySelect({
@@ -27,7 +25,6 @@ export function DictionarySelect({
   value,
   onValueChange,
   placeholder = "",
-  error = false,
 }: DictionarySelectProps) {
   const { data: items, isLoading } = useDictionaryByType(type);
 

@@ -6,6 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, User } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const { logout, user } = useAuth();
@@ -32,11 +33,11 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
             </Tooltip>
           </TooltipProvider>
 
-          <div 
-            onClick={() => router.push('/home')}
+          <div
+            onClick={() => router.push("/home")}
             className="flex-1 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
           >
-            <img src="/cafolio/Isologo.png" alt="Cafolio" className="h-8 w-8" />
+            <Image src="/cafolio/Isologo.png" alt="Cafolio" width={32} height={32} className="h-8 w-8" />
             <h1 className="text-xl font-semibold">Cafolio</h1>
           </div>
 

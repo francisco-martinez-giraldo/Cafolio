@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CoffeeCard, CoffeeCardProps } from "@/components/CoffeeCard";
+import { CoffeeCard } from "@/components/CoffeeCard";
 import { CoffeeCardNew } from "@/components/CoffeeCardNew";
 import { useRecentCoffees } from "@/hooks/useCoffees";
 

@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 import { useState } from "react";
 
 export interface CoffeeCardProps {
@@ -18,9 +19,11 @@ export function CoffeeCard({ brand, variety, overallRating, imageUrl }: CoffeeCa
         {imageUrl ? (
           <>
             {imageLoading && <Skeleton className="w-full h-full absolute inset-0" />}
-            <img
+            <Image
               src={imageUrl}
               alt={`${brand} ${variety}`}
+              width={200}
+              height={200}
               className="w-full h-full object-cover rounded-md absolute inset-0"
               onLoad={() => setImageLoading(false)}
               onError={() => setImageLoading(false)}

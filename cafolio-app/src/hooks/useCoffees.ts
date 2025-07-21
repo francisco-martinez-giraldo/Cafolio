@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { coffeesService } from "@/services";
-import { CreateCoffeeRequest, UpdateCoffeeRequest } from "@/types/api";
+import { UpdateCoffeeRequest } from "@/types/api";
 
 export const useRecentCoffees = (limit?: number) => {
   return useQuery({
@@ -30,7 +30,7 @@ export const useCreateCoffee = () => {
 
   return useMutation({
     mutationFn: coffeesService.create,
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["coffees"] });
     },
   });

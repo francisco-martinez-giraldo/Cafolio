@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { CreateCoffeeRequest } from "@/types/api";
+import Image from "next/image";
 
 const FormSchema = z.object({
   brand: z.string().min(1, "La marca es obligatoria"),
@@ -123,7 +124,7 @@ export function CoffeeForm() {
         <FormField
           control={form.control}
           name="image"
-          render={({ field, fieldState }) => (
+          render={({ fieldState }) => (
             <FormItem>
               <Card>
                 <CardContent className="p-6">
@@ -136,7 +137,9 @@ export function CoffeeForm() {
                     }`}
                   >
                     {imagePreview ? (
-                      <img
+                      <Image
+                        width={100}
+                        height={100}
                         src={imagePreview}
                         alt="Preview"
                         className="w-full h-full object-cover rounded-lg"

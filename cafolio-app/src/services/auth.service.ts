@@ -2,7 +2,12 @@ import { apiClient } from '@/lib/api';
 
 export interface LoginResponse {
   message: string;
-  data: any;
+  data: {
+    user: {
+      email: string;
+      id: string;
+    };
+  };
 }
 
 export const authService = {
