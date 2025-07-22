@@ -29,7 +29,9 @@ export const coffeesService = {
   },
 
   update: async (id: string, coffee: UpdateCoffeeRequest): Promise<Coffee> => {
-    const { data } = await apiClient.put(`/api/coffees/${id}`, coffee);
+    const user = getUser();
+    const userEmail = user?.email || "";
+    const { data } = await apiClient.put(`/api/coffees/${id}?user_id=${userEmail}`, coffee);
     return data;
   },
 

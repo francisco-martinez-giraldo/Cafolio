@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { DictionarySelect } from "@/components/ui/DictionarySelect";
 import { Camera } from "lucide-react";
-import { useCreateCoffee } from "@/hooks/useCoffees";
+import { useCreateCoffee, useUpdateCoffee, useCoffeeById } from "@/hooks/useCoffees";
 import { useUploadImage } from "@/hooks/useStorage";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -30,7 +30,7 @@ const FormSchema = z.object({
   variety: z.string().min(1, "La variedad es obligatoria"),
   process: z.string().min(1, "El proceso es obligatorio"),
   price: z.string().min(1, "El precio es obligatorio"),
-  image: z.string().min(1, "La foto es obligatoria"),
+  image: z.string().optional(),
   region: z.string().optional(),
   finca: z.string().optional(),
   notes: z.string().optional(),
@@ -41,8 +41,15 @@ export function CoffeeForm() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuth();
+
+  const editId = searchParams.get("edit");
+  const isEditing = !!editId;
+
+  const { data: existingCoffee } = useCoffeeById(editId || "");
   const createCoffee = useCreateCoffee();
+  const updateCoffee = useUpdateCoffee();
   const uploadImage = useUploadImage();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -58,6 +65,31 @@ export function CoffeeForm() {
       notes: "",
     },
   });
+
+  // Cargar datos existentes cuando está en modo edición
+  useEffect(() => {
+    if (isEditing && existingCoffee) {
+      // Usar setTimeout para asegurar que los DictionarySelect se hayan renderizado
+      const timer = setTimeout(() => {
+        form.reset({
+          brand: existingCoffee.brand_dictionary_id,
+          variety: existingCoffee.variety_dictionary_id,
+          process: existingCoffee.process_dictionary_id,
+          price: existingCoffee.price ? formatPrice(existingCoffee.price.toString()) : "",
+          image: existingCoffee.photo_path ? "existing" : "",
+          region: existingCoffee.region || "",
+          finca: existingCoffee.farm || "",
+          notes: existingCoffee.notes || "",
+        });
+
+        if (existingCoffee.photo_path) {
+          setImagePreview(existingCoffee.photo_path);
+        }
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isEditing, existingCoffee, form]);
 
   const formatPrice = (value: string) => {
     const numericValue = value.replace(/\D/g, "");
@@ -90,18 +122,22 @@ export function CoffeeForm() {
   };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    if (!user?.email || !selectedFile) return;
+    if (!user?.email) return;
+    if (!isEditing && !selectedFile) return; // Solo requerir imagen nueva para creación
 
     try {
-      // First upload the image
-      const uploadResult = await uploadImage.mutateAsync({
-        file: selectedFile,
-        folder: "coffees",
-      });
+      let photoPath = existingCoffee?.photo_path || "";
 
-      // Then create the coffee with the uploaded image URL
-      const coffeeData: CreateCoffeeRequest = {
-        user_id: user.email,
+      // Subir nueva imagen si se seleccionó una
+      if (selectedFile) {
+        const uploadResult = await uploadImage.mutateAsync({
+          file: selectedFile,
+          folder: "coffees",
+        });
+        photoPath = uploadResult.url;
+      }
+
+      const coffeeData = {
         brand_dictionary_id: data.brand,
         variety_dictionary_id: data.variety,
         process_dictionary_id: data.process,
@@ -109,14 +145,22 @@ export function CoffeeForm() {
         region: data.region || "",
         farm: data.finca || "",
         notes: data.notes || "",
-        photo_path: uploadResult.url,
+        photo_path: photoPath,
       };
 
-      await createCoffee.mutateAsync(coffeeData);
+      if (isEditing && editId) {
+        await updateCoffee.mutateAsync({ id: editId, data: coffeeData });
+      } else {
+        const createData: CreateCoffeeRequest = {
+          user_id: user.email,
+          ...coffeeData,
+        };
+        await createCoffee.mutateAsync(createData);
+      }
+
       router.push("/home");
     } catch (error) {
       console.error("Error:", error);
-      // Error handling is done through the form state
     }
   };
 
@@ -130,10 +174,10 @@ export function CoffeeForm() {
           render={({ fieldState }) => (
             <FormItem>
               <Card>
-                <CardContent className="p-6">
+                <CardContent className="p-2">
                   <div
                     onClick={handleImageClick}
-                    className={`flex flex-col items-center justify-center h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                    className={`flex flex-col items-center justify-center h-96 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
                       fieldState.error
                         ? "border-destructive hover:border-destructive/70"
                         : "border-muted-foreground/25 hover:border-muted-foreground/50"
@@ -145,7 +189,7 @@ export function CoffeeForm() {
                         height={100}
                         src={imagePreview}
                         alt="Preview"
-                        className="w-full h-full object-cover rounded-lg"
+                        className="w-full h-full object-contain rounded-lg"
                       />
                     ) : (
                       <>
@@ -296,21 +340,25 @@ export function CoffeeForm() {
           <Button
             type="submit"
             className="w-full mt-6 cursor-pointer"
-            disabled={uploadImage.isPending || createCoffee.isPending}
+            disabled={uploadImage.isPending || createCoffee.isPending || updateCoffee.isPending}
           >
             {uploadImage.isPending
               ? "Subiendo imagen..."
-              : createCoffee.isPending
-              ? "Guardando café..."
+              : createCoffee.isPending || updateCoffee.isPending
+              ? isEditing
+                ? "Actualizando café..."
+                : "Guardando café..."
+              : isEditing
+              ? "Actualizar Café"
               : "Guardar Café"}
           </Button>
 
-          {(uploadImage.error || createCoffee.error) && (
+          {(uploadImage.error || createCoffee.error || updateCoffee.error) && (
             <div className="text-sm text-destructive mt-2 text-center">
               {uploadImage.error
                 ? "Error al subir la imagen. Intenta nuevamente."
-                : createCoffee.error
-                ? "Error al guardar el café. Intenta nuevamente."
+                : createCoffee.error || updateCoffee.error
+                ? `Error al ${isEditing ? "actualizar" : "guardar"} el café. Intenta nuevamente.`
                 : ""}
             </div>
           )}

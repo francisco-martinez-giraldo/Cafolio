@@ -8,10 +8,21 @@ import { getUser } from "@/lib/auth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProcessStep1 } from "@/components/ProcessSteps/ProcessStep1";
 import { ProcessStep2 } from "@/components/ProcessSteps/ProcessStep2";
+import { Coffee } from "@/types/api";
+
+interface ProcessStepData {
+  method?: string;
+  temperature?: string;
+  ratio?: string;
+  grind?: string;
+  rating?: number;
+  notes?: string[];
+  generalNotes?: string;
+}
 
 export default function NewProcessPage() {
   const [activeTab, setActiveTab] = useState("step1");
-  const [selectedCoffee, setSelectedCoffee] = useState<any>(null);
+  const [selectedCoffee, setSelectedCoffee] = useState<Coffee | null>(null);
   const [processData, setProcessData] = useState({
     method: "",
     temperature: "",
@@ -28,19 +39,11 @@ export default function NewProcessPage() {
 
   useEffect(() => {
     if (coffeeData) {
-      setSelectedCoffee({
-        id: coffeeData.id,
-        brand: coffeeData.brand?.value,
-        variety: coffeeData.variety?.value,
-        process: coffeeData.process?.value,
-        region: coffeeData.region,
-        notes: coffeeData.notes,
-        image: coffeeData.photo_path,
-      });
+      setSelectedCoffee(coffeeData);
     }
   }, [coffeeData]);
 
-  const handleStep1Complete = (data: any) => {
+  const handleStep1Complete = (data: ProcessStepData) => {
     setProcessData((prev) => ({ ...prev, ...data }));
     setActiveTab("step2");
   };
@@ -48,14 +51,14 @@ export default function NewProcessPage() {
   const router = useRouter();
   const createPreparation = useCreateCoffeePreparation();
 
-  const handleStep2Change = (data: any) => {
+  const handleStep2Change = (data: ProcessStepData) => {
     setProcessData((prev) => ({ ...prev, ...data }));
   };
 
-  const handleStep2Complete = async (data: any) => {
+  const handleStep2Complete = async (data: ProcessStepData) => {
     const finalData = { ...processData, ...data };
     const user = getUser();
-    
+
     if (!user?.email || !coffeeId) return;
 
     try {
@@ -69,10 +72,10 @@ export default function NewProcessPage() {
         notes: finalData.notes,
         comments: finalData.generalNotes,
       });
-      
-      router.push('/home');
+
+      router.push("/home");
     } catch (error) {
-      console.error('Error saving preparation:', error);
+      console.error("Error saving preparation:", error);
     }
   };
 
@@ -89,17 +92,17 @@ export default function NewProcessPage() {
         </TabsList>
 
         <TabsContent value="step1" className="mt-6">
-          <ProcessStep1 
-            onComplete={handleStep1Complete} 
-            selectedCoffee={selectedCoffee}
+          <ProcessStep1
+            onComplete={handleStep1Complete}
+            selectedCoffee={selectedCoffee || undefined}
             initialData={processData}
           />
         </TabsContent>
 
         <TabsContent value="step2" className="mt-6">
-          <ProcessStep2 
-            onComplete={handleStep2Complete} 
-            selectedCoffee={selectedCoffee} 
+          <ProcessStep2
+            onComplete={handleStep2Complete}
+            selectedCoffee={selectedCoffee || undefined}
             isLoading={createPreparation.isPending}
             initialData={processData}
             onChange={handleStep2Change}

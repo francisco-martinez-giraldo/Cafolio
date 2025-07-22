@@ -32,15 +32,16 @@ export function CoffeeCard({ coffee, overallRating }: CoffeeCardProps) {
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // TODO: Navigate to edit page
-    console.log("Editar café");
+    if (coffee.id) {
+      router.push(`/newCoffee?edit=${coffee.id}`);
+    }
   };
 
   const renderStars = (rating: number) => {
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
-    const totalStars = 5;
+    // const totalStars = 5;
 
     // Estrellas completas
     for (let i = 0; i < fullStars; i++) {

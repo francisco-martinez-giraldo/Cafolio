@@ -4,11 +4,19 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CoffeeInfo } from "@/components/CoffeeInfo";
 import { DictionarySelector } from "../DictionarySelector";
+import { Coffee } from "@/types/api";
+
+interface ProcessStep1Data {
+  method: string;
+  temperature: string;
+  ratio: string;
+  grind: string;
+}
 
 interface ProcessStep1Props {
-  onComplete: (data: any) => void;
-  selectedCoffee?: any;
-  initialData?: any;
+  onComplete: (data: ProcessStep1Data) => void;
+  selectedCoffee?: Coffee;
+  initialData?: Partial<ProcessStep1Data>;
 }
 
 export function ProcessStep1({ onComplete, selectedCoffee, initialData }: ProcessStep1Props) {
