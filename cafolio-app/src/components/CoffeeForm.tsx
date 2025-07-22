@@ -94,7 +94,10 @@ export function CoffeeForm() {
 
     try {
       // First upload the image
-      const uploadResult = await uploadImage.mutateAsync(selectedFile);
+      const uploadResult = await uploadImage.mutateAsync({
+        file: selectedFile,
+        folder: "coffees",
+      });
 
       // Then create the coffee with the uploaded image URL
       const coffeeData: CreateCoffeeRequest = {

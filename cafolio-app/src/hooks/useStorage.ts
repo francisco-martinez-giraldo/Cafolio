@@ -3,6 +3,7 @@ import { storageService } from "@/services/storage.service";
 
 export const useUploadImage = () => {
   return useMutation({
-    mutationFn: storageService.uploadImage,
+    mutationFn: ({ file, folder }: { file: File; folder?: string }) => 
+      storageService.uploadImage(file, folder),
   });
 };

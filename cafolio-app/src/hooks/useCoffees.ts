@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { coffeesService } from "@/services";
-import { UpdateCoffeeRequest } from "@/types/api";
+import { UpdateCoffeeRequest, CoffeeWithRating } from "@/types/api";
 
 export const useRecentCoffees = (limit?: number) => {
-  return useQuery({
+  return useQuery<CoffeeWithRating[]>({
     queryKey: ["coffees", "recent", limit],
     queryFn: () => coffeesService.getRecent(limit),
   });

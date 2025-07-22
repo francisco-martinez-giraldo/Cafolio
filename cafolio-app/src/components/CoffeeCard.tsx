@@ -29,6 +29,7 @@ export function CoffeeCard({ id, brand, variety, overallRating, imageUrl }: Coff
           <>
             {imageLoading && <Skeleton className="w-full h-full absolute inset-0" />}
             <Image
+              loading="lazy"
               src={imageUrl}
               alt={`${brand} ${variety}`}
               width={200}

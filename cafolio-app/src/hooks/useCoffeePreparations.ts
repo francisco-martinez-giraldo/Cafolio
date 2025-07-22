@@ -24,6 +24,7 @@ export const useCreateCoffeePreparation = () => {
     mutationFn: coffeePreparationsService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["coffee-preparations"] });
+      queryClient.invalidateQueries({ queryKey: ["coffees", "recent"] });
     },
   });
 };

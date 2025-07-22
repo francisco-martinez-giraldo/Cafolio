@@ -2,9 +2,11 @@ import { useDictionaryByType } from "@/hooks/useDictionary";
 import { DictionaryType } from "@/types/api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef } from "react";
+import { useTheme } from "next-themes";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Label } from "./ui/label";
 import Image from "next/image";
+import { Button } from "./ui/button";
 
 interface ProcessSelectorProps {
   type: DictionaryType;
@@ -23,6 +25,7 @@ export function DictionarySelector({
 }: ProcessSelectorProps) {
   const { data: items, isLoading } = useDictionaryByType(type);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { resolvedTheme } = useTheme();
 
   if (isLoading) return <div className="text-xs">Cargando...</div>;
 
@@ -41,12 +44,12 @@ export function DictionarySelector({
       <p className="text-sm font-medium mb-2">{label}</p>
       <div className="relative">
         {isScrollable && (
-          <button
+          <Button
             onClick={() => scroll("left")}
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-background border rounded p-1 shadow-sm"
           >
             <ChevronLeft className="w-4 h-4" />
-          </button>
+          </Button>
         )}
         <RadioGroup
           value={value}
@@ -74,7 +77,9 @@ export function DictionarySelector({
                     alt={item.value}
                     width={24}
                     height={24}
-                    className={`rounded ${value === item.id ? "brightness-0 invert" : ""}`}
+                    className={`rounded ${
+                      resolvedTheme === "dark" || value === item.id ? "brightness-0 invert" : ""
+                    }`}
                   />
                 ) : null}
                 <span className="text-xs">{item.value}</span>

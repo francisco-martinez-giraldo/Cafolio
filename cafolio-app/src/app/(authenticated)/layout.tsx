@@ -7,10 +7,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 
 export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const { logout, user } = useAuth();
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -37,7 +39,13 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
             onClick={() => router.push("/home")}
             className="flex-1 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
           >
-            <Image src="/cafolio/Isologo.png" alt="Cafolio" width={32} height={32} className="h-8 w-8" />
+            <Image
+              src="/cafolio/Isologo.png"
+              alt="Cafolio"
+              width={32}
+              height={32}
+              className={`h-8 w-8 ${resolvedTheme === "dark" ? "brightness-0 invert" : ""}`}
+            />
             <h1 className="text-xl font-semibold">Cafolio</h1>
           </div>
 

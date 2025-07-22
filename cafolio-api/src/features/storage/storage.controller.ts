@@ -34,6 +34,9 @@ const storageService = new StorageService();
  *                 type: string
  *                 format: binary
  *                 description: Image file to upload (max 5MB)
+ *               folder:
+ *                 type: string
+ *                 description: Optional folder path to store the image
  *             required:
  *               - image
  *     responses:
@@ -61,11 +64,15 @@ export const uploadImage = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "No file provided" });
     }
 
+    const folder = req.body.folder || '';
     const fileName = `${Date.now()}-${req.file.originalname}`;
-    const result = await storageService.uploadImage(req.file.buffer, fileName, req.file.mimetype);
-    
+    const result = await storageService.uploadImage(req.file.buffer, fileName, req.file.mimetype, folder);
+
     // Generate public URL directly
-    const publicUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/${process.env.SUPABASE_STORAGE_BUCKET || 'cafolio'}/${fileName}`;
+    const path = folder ? `${folder}/${fileName}` : `storage/${fileName}`;
+    const publicUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/${
+      process.env.SUPABASE_STORAGE_BUCKET || "cafolio"
+    }/${path}`;
 
     res.json({
       message: "Image uploaded successfully",
@@ -77,5 +84,3 @@ export const uploadImage = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Upload failed" });
   }
 };
-
-

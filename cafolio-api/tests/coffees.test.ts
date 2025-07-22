@@ -169,22 +169,44 @@ describe('CoffeesService', () => {
 
   describe('getRecent', () => {
     it('should return recent coffees with default limit', async () => {
-      mockSupabase.data = [mockCoffee];
+      const mockCoffeeWithPreparations = {
+        ...mockCoffee,
+        coffee_preparations: [{ ranking: 4.5 }, { ranking: 3.5 }]
+      };
+      mockSupabase.data = [mockCoffeeWithPreparations];
       mockSupabase.error = null;
 
       const result = await coffeesService.getRecent('user123');
 
       expect(mockSupabase.limit).toHaveBeenCalledWith(3);
-      expect(result).toEqual([mockCoffee]);
+      expect(result).toEqual([{ ...mockCoffee, overall_rating: 4.0 }]);
     });
 
     it('should return recent coffees with custom limit', async () => {
-      mockSupabase.data = [mockCoffee];
+      const mockCoffeeWithPreparations = {
+        ...mockCoffee,
+        coffee_preparations: [{ ranking: 5.0 }]
+      };
+      mockSupabase.data = [mockCoffeeWithPreparations];
       mockSupabase.error = null;
 
-      await coffeesService.getRecent('user123', 5);
+      const result = await coffeesService.getRecent('user123', 5);
 
       expect(mockSupabase.limit).toHaveBeenCalledWith(5);
+      expect(result).toEqual([{ ...mockCoffee, overall_rating: 5.0 }]);
+    });
+
+    it('should return coffee with 0 rating when no preparations exist', async () => {
+      const mockCoffeeWithoutPreparations = {
+        ...mockCoffee,
+        coffee_preparations: []
+      };
+      mockSupabase.data = [mockCoffeeWithoutPreparations];
+      mockSupabase.error = null;
+
+      const result = await coffeesService.getRecent('user123');
+
+      expect(result).toEqual([{ ...mockCoffee, overall_rating: 0 }]);
     });
   });
 });

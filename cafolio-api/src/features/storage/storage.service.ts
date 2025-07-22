@@ -6,10 +6,12 @@ dotenv.config();
 export class StorageService {
   private bucketName = process.env.SUPABASE_STORAGE_BUCKET || 'cafolio';
 
-  async uploadImage(file: Buffer, fileName: string, contentType: string) {
+  async uploadImage(file: Buffer, fileName: string, contentType: string, folder?: string) {
+    const path = folder ? `${folder}/${fileName}` : `storage/${fileName}`;
+    
     const { data, error } = await supabase.storage
       .from(this.bucketName)
-      .upload(fileName, file, {
+      .upload(path, file, {
         contentType,
         upsert: true
       });

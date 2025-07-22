@@ -1,9 +1,9 @@
 import { apiClient } from "@/lib/api";
 import { getUser } from "@/lib/auth";
-import { Coffee, CreateCoffeeRequest, UpdateCoffeeRequest } from "@/types/api";
+import { Coffee, CreateCoffeeRequest, UpdateCoffeeRequest, CoffeeWithRating } from "@/types/api";
 
 export const coffeesService = {
-  getRecent: async (limit?: number): Promise<Coffee[]> => {
+  getRecent: async (limit?: number): Promise<CoffeeWithRating[]> => {
     const user = getUser();
     const userEmail = user?.email || "";
     const limitParam = limit ? `&limit=${limit}` : "";

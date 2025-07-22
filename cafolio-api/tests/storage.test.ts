@@ -33,15 +33,31 @@ describe('StorageService', () => {
   });
 
   describe('uploadImage', () => {
-    it('should upload image successfully', async () => {
-      const mockUploadResult = { path: 'cafolio/test-image.jpg' };
+    it('should upload image to default storage folder when no folder is provided', async () => {
+      const mockUploadResult = { path: 'cafolio/storage/test-image.jpg' };
       mockSupabase.storage.data = mockUploadResult;
       mockSupabase.storage.error = null;
 
       const result = await storageService.uploadImage(mockFile, fileName, contentType);
 
       expect(mockSupabase.storage.from).toHaveBeenCalledWith('cafolio');
-      expect(mockSupabase.storage.upload).toHaveBeenCalledWith(fileName, mockFile, {
+      expect(mockSupabase.storage.upload).toHaveBeenCalledWith('storage/test-image.jpg', mockFile, {
+        contentType,
+        upsert: true
+      });
+      expect(result).toEqual(mockUploadResult);
+    });
+
+    it('should upload image to specified folder when folder is provided', async () => {
+      const mockUploadResult = { path: 'cafolio/coffee-images/test-image.jpg' };
+      mockSupabase.storage.data = mockUploadResult;
+      mockSupabase.storage.error = null;
+      const folder = 'coffee-images';
+
+      const result = await storageService.uploadImage(mockFile, fileName, contentType, folder);
+
+      expect(mockSupabase.storage.from).toHaveBeenCalledWith('cafolio');
+      expect(mockSupabase.storage.upload).toHaveBeenCalledWith('coffee-images/test-image.jpg', mockFile, {
         contentType,
         upsert: true
       });

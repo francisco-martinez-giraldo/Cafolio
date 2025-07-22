@@ -100,3 +100,7 @@ export interface UpdateCoffeePreparationRequest {
   notes?: string[];
   comments?: string;
 }
+
+export interface CoffeeWithRating extends Coffee {
+  overall_rating: number;
+}

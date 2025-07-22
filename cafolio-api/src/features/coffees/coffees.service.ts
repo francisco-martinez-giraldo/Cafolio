@@ -1,5 +1,5 @@
 import { supabase } from "../../config/supabase";
-import { Coffee, CreateCoffeeRequest, UpdateCoffeeRequest } from "../../types";
+import { Coffee, CreateCoffeeRequest, UpdateCoffeeRequest, CoffeeWithRating } from "../../types";
 
 export class CoffeesService {
   async getByUserId(userId: string, limit?: number): Promise<Coffee[]> {
@@ -70,7 +70,35 @@ export class CoffeesService {
     if (error) throw error;
   }
 
-  async getRecent(userId: string, limit: number = 3): Promise<Coffee[]> {
-    return this.getByUserId(userId, limit);
+  async getRecent(userId: string, limit: number = 3): Promise<CoffeeWithRating[]> {
+    const { data, error } = await supabase
+      .from("coffees")
+      .select(
+        `
+        *,
+        brand:dictionary!brand_dictionary_id(*),
+        variety:dictionary!variety_dictionary_id(*),
+        process:dictionary!process_dictionary_id(*),
+        coffee_preparations(ranking)
+      `
+      )
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (error) throw error;
+    
+    // Calculate overall_rating for each coffee
+    const coffeesWithRating = (data || []).map(coffee => {
+      const preparations = coffee.coffee_preparations || [];
+      const overall_rating = preparations.length > 0 
+        ? preparations.reduce((sum: number, prep: any) => sum + prep.ranking, 0) / preparations.length
+        : 0;
+      
+      const { coffee_preparations, ...coffeeData } = coffee;
+      return { ...coffeeData, overall_rating };
+    });
+
+    return coffeesWithRating;
   }
 }

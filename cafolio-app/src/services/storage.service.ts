@@ -7,9 +7,13 @@ export interface UploadImageResponse {
 }
 
 export const storageService = {
-  uploadImage: async (file: File): Promise<UploadImageResponse> => {
+  uploadImage: async (file: File, folder?: string): Promise<UploadImageResponse> => {
     const formData = new FormData();
     formData.append('image', file);
+    
+    if (folder) {
+      formData.append('folder', folder);
+    }
     
     const { data } = await apiClient.post("/api/storage/upload", formData, {
       headers: {
