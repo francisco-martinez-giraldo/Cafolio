@@ -7,14 +7,14 @@ export function CoffeeCardNew() {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push('/newCoffee');
+    router.push("/newCoffee");
   };
 
   return (
-    <Card className="p-3 cursor-pointer hover:bg-accent/50 transition-colors" onClick={handleClick}>
-      <div className="aspect-square border-2 border-dashed border-muted-foreground/30 rounded-md mb-2 flex flex-col items-center justify-center">
-        <div className="text-2xl text-muted-foreground mb-2">+</div>
-        <span className="text-xs text-muted-foreground text-center">Agregar café</span>
+    <Card className="p-6 cursor-pointer hover:bg-accent/50 transition-colors" onClick={handleClick}>
+      <div className="h-32 border-2 border-dashed border-muted-foreground/30 rounded-xl flex flex-col items-center justify-center">
+        <div className="text-3xl text-muted-foreground mb-3">+</div>
+        <span className="text-sm text-muted-foreground text-center font-medium">Agregar café</span>
       </div>
     </Card>
   );

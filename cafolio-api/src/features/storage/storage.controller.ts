@@ -64,9 +64,14 @@ export const uploadImage = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "No file provided" });
     }
 
-    const folder = req.body.folder || '';
+    const folder = req.body.folder || "";
     const fileName = `${Date.now()}-${req.file.originalname}`;
-    const result = await storageService.uploadImage(req.file.buffer, fileName, req.file.mimetype, folder);
+    const result = await storageService.uploadImage(
+      req.file.buffer,
+      fileName,
+      req.file.mimetype,
+      folder
+    );
 
     // Generate public URL directly
     const path = folder ? `${folder}/${fileName}` : `storage/${fileName}`;
@@ -80,7 +85,6 @@ export const uploadImage = async (req: Request, res: Response) => {
       url: publicUrl,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Upload failed" });
   }
 };

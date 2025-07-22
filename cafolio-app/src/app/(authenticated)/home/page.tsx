@@ -33,16 +33,9 @@ export default function HomePage() {
       <h1 className="text-2xl font-bold mb-6">Mis Cafés</h1>
 
       {/* Grid de cafés */}
-      <div className="grid grid-cols-2 gap-3 mb-8">
+      <div className="grid grid-cols-1 gap-3 mb-8">
         {coffees?.map((coffee) => (
-          <CoffeeCard
-            key={coffee.id}
-            id={coffee.id}
-            brand={coffee.brand?.value || "Sin marca"}
-            variety={coffee.variety?.value || "Sin variedad"}
-            overallRating={coffee.overall_rating || 0}
-            imageUrl={coffee.photo_path || ""}
-          />
+          <CoffeeCard key={coffee.id} coffee={coffee} overallRating={coffee.overall_rating || 0} />
         ))}
         <CoffeeCardNew />
       </div>
