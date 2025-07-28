@@ -86,7 +86,7 @@ export function ProcessStep2({
         <div className="flex gap-1 justify-center">
           {[1, 2, 3, 4, 5].map((star) => (
             <div key={star} className="relative">
-              <Button
+              <button
                 onClick={() => {
                   const newRating = star - 0.5;
                   setRating(newRating);

@@ -177,7 +177,7 @@ export function CoffeeForm() {
                 <CardContent className="p-2">
                   <div
                     onClick={handleImageClick}
-                    className={`flex flex-col items-center justify-center h-96 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                    className={`flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
                       fieldState.error
                         ? "border-destructive hover:border-destructive/70"
                         : "border-muted-foreground/25 hover:border-muted-foreground/50"
