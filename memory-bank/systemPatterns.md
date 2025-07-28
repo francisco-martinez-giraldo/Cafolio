@@ -38,3 +38,20 @@
 - **Cobertura**: Configurada para ambos tipos de pruebas
 - **Patrón de cleanup**: Cada test maneja sus propios datos
 - **Datos de prueba**: Prefijo `test_` en user_id para identificación
+
+## Patrones de Diseño
+- **Repository Pattern**: Para acceso a datos
+- **Service Layer**: Para lógica de negocio
+- **Component Composition**: Para UI reutilizable
+- **Custom Hooks**: Para lógica compartida
+
+## Convenciones de Naming
+- **Archivos**: kebab-case (coffee-service.ts)
+- **Componentes**: PascalCase (CoffeeCard)
+- **Variables/Funciones**: camelCase (getCoffeeById)
+- **Constantes**: UPPER_SNAKE_CASE (API_BASE_URL)
+
+## Error Handling
+- **API Errors**: Try/catch con mensajes user-friendly
+- **Form Validation**: Zod schemas con React Hook Form
+- **Loading States**: Skeleton components durante fetch

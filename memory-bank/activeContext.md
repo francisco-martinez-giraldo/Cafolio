@@ -8,18 +8,20 @@
 - ✅ UI components con Shadcn
 - ✅ Pruebas de integración configuradas y funcionando
 - ✅ Sistema de cobertura de pruebas implementado
+- ✅ Storage controller con multer implementado
+- ✅ TypeScript errors en storage controller resueltos
 - ⚠️ Middleware eliminado por conflictos en Vercel
 
 ## Decisiones Técnicas Recientes
-1. **Eliminación de middleware**: Removido para evitar errores 500 en Vercel
-2. **Layout de botones**: Implementado botón fijo en bottom para mejor UX
-3. **Gestión de estado**: Confirmado uso de Jotai + React Query
-4. **Testing strategy**: Implementadas pruebas de integración que no persisten datos
-5. **Cleanup de datos**: Cada test maneja su propio cleanup para evitar interferencias
+1. **Storage Implementation**: Implementado multer para manejo de archivos con tipos TypeScript correctos
+2. **Type Safety**: Agregada interfaz MulterRequest para extender Request con file property
+3. **File Upload**: Configurado almacenamiento en memoria con límite de 5MB para imágenes
+4. **Error Handling**: Implementado manejo de errores específico para uploads
+5. **Testing strategy**: Implementadas pruebas de integración que no persisten datos
 
 ## Próximas Tareas
+- Integrar storage controller con frontend
 - Completar sistema de cata y calificación
-- Implementar almacenamiento de imágenes
 - Mejorar cobertura de pruebas
 - Optimización para producción
 

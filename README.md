@@ -2,25 +2,35 @@
 
 ## Resumen del Proyecto
 
-Cafolio es una aplicación para entusiastas del café que permite registrar, evaluar y hacer seguimiento de diferentes marcas de café, sus preparaciones y catas. La aplicación está diseñada para proporcionar una experiencia de usuario fluida y organizada para los amantes del café.
+Cafolio es una aplicación para entusiastas del café que permite registrar, evaluar y hacer seguimiento de diferentes marcas de café, sus preparaciones y catas.
 
-## Estructura del Proyecto
+## Estado Actual
 
-El proyecto está organizado en dos componentes principales:
+✅ **Implementado:**
+- Estructura base del proyecto
+- Autenticación con Supabase
+- CRUD de marcas de café
+- Sistema de preparaciones
+- UI components con Shadcn
+- Storage controller para imágenes
+- Pruebas de integración
+- Sistema de cobertura de pruebas
+
+## Stack Tecnológico
 
 ### Frontend (cafolio-app)
-
-- **Framework:** TanStack Start con React
-- **Componentes UI:** Shadcn UI con Tailwind CSS
-- **Gestión de Estado:** Jotai
-- **Fetching de Datos:** React Query con Axios
+- **Framework:** Next.js 15 con App Router
+- **UI:** Shadcn UI + Tailwind CSS
+- **Estado:** Jotai + React Query
+- **HTTP:** Axios
+- **Forms:** React Hook Form + Zod
 
 ### Backend (cafolio-api)
-
-- **Lenguaje:** TypeScript
-- **Plataforma:** Supabase (PostgreSQL)
-- **Testing:** Jest
-- **Documentación API:** Swagger (OpenAPI)
+- **Runtime:** Node.js con TypeScript
+- **Database:** Supabase (PostgreSQL)
+- **Storage:** Supabase Storage + Multer
+- **Testing:** Jest (unitarias + integración)
+- **Docs:** Swagger/OpenAPI
 
 ## Historias de Usuario
 
@@ -99,9 +109,37 @@ Cafolio/
 3. Detalle de Marca o Añadir Nueva Marca → 
 4. Añadir Preparación
 
+## Instalación y Desarrollo
+
+### Backend
+```bash
+cd cafolio-api
+npm install
+npm run dev
+```
+
+### Frontend
+```bash
+cd cafolio-app
+npm install
+npm run dev
+```
+
+### Testing
+```bash
+# Pruebas unitarias
+npm test
+
+# Pruebas de integración
+npm run test:integration
+
+# Cobertura
+npm run test:coverage
+```
+
 ## Próximos Pasos
 
-- Implementación completa de todas las historias de usuario
-- Pruebas de integración
-- Optimización de rendimiento
-- Preparación para despliegue
+- Integrar storage controller con frontend
+- Completar sistema de cata y calificación
+- Mejorar cobertura de pruebas
+- Deploy en producción

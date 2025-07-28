@@ -66,3 +66,31 @@ notes JSONB -- Array de palabras
 comments TEXT -- Comentarios adicionales
 created_at TIMESTAMP
 ```
+
+## Variables de Entorno
+```bash
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+
+# Storage
+SUPABASE_STORAGE_BUCKET=cafolio
+```
+
+## Scripts de Desarrollo
+```json
+{
+  "dev": "next dev",
+  "build": "next build",
+  "test": "jest",
+  "test:integration": "jest --config=jest.integration.config.js",
+  "test:coverage": "jest --coverage"
+}
+```
+
+## Configuración de Deploy
+- **Frontend**: Vercel con Next.js
+- **Backend**: Supabase (managed)
+- **Storage**: Supabase Storage para imágenes
+- **Auth**: Supabase Auth con RLS policies
