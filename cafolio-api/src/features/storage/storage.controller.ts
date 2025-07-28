@@ -2,11 +2,15 @@ import { Request, Response } from "express";
 import { StorageService } from "./storage.service";
 import multer from "multer";
 
+interface MulterRequest extends Request {
+  file?: Express.Multer.File;
+}
+
 const storage = multer.memoryStorage();
 export const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-  fileFilter: (req, file, cb) => {
+  fileFilter: (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
@@ -58,7 +62,7 @@ const storageService = new StorageService();
  *       500:
  *         description: Upload failed
  */
-export const uploadImage = async (req: Request, res: Response) => {
+export const uploadImage = async (req: MulterRequest, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No file provided" });
