@@ -68,6 +68,7 @@ export default function NewProcessPage() {
         method_dictionary_id: finalData.method,
         temperature_dictionary_id: finalData.temperature,
         ratio_dictionary_id: finalData.ratio,
+        grind_dictionary_id: finalData.grind,
         ranking: finalData.rating,
         notes: finalData.notes,
         comments: finalData.generalNotes,

@@ -10,7 +10,9 @@ Cafolio es una aplicación para entusiastas del café que permite registrar, eva
 - Estructura base del proyecto
 - Autenticación con Supabase
 - CRUD de marcas de café
-- Sistema de preparaciones
+- Sistema de preparaciones completo
+- Historial de preparaciones por café
+- Campo de molienda (grind) en preparaciones
 - UI components con Shadcn
 - Storage controller para imágenes
 - Pruebas de integración
@@ -137,9 +139,29 @@ npm run test:integration
 npm run test:coverage
 ```
 
+## Funcionalidades Completadas
+
+### ✅ Sistema de Historial
+- Navegación desde home a historial específico por café
+- Visualización de preparaciones ordenadas por fecha
+- UI optimizada con distribución justificada
+- Badges individuales para notas de cata
+
+### ✅ Campo de Molienda
+- Integración completa en base de datos
+- Formularios actualizados con selección de grind
+- Visualización en tarjetas de historial
+- Tests actualizados y funcionando
+
+### ✅ Mejoras de UI/UX
+- Alineación perfecta entre header y tarjetas
+- Uso consistente de tokens Shadcn
+- Distribución justificada de campos
+- Componentes Badge para mejor legibilidad
+
 ## Próximos Pasos
 
-- Integrar storage controller con frontend
-- Completar sistema de cata y calificación
-- Mejorar cobertura de pruebas
+- Implementar filtros en historial (método, calificación)
+- Agregar estadísticas y métricas de preparaciones
+- Mejorar sistema de búsqueda global
 - Deploy en producción

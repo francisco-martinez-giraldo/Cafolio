@@ -5,9 +5,11 @@ import { CoffeeCard } from "@/components/CoffeeCard";
 import { CoffeeCardNew } from "@/components/CoffeeCardNew";
 import { useRecentCoffees } from "@/hooks/useCoffees";
 
+
 export default function HomePage() {
   const MAX_INITIAL_COFFEES = 3; // Limite inicial de cafés a mostrar
   const { data: coffees, isLoading, error } = useRecentCoffees(MAX_INITIAL_COFFEES);
+
 
   if (isLoading) {
     return (

@@ -125,14 +125,15 @@ INSERT INTO coffees (
     'Notas a frutos amarillos y miel.'
 );
 
-DROP TABLE coffee_preparations;
- CREATE TABLE coffee_preparations (
+DROP TABLE IF EXISTS coffee_preparations;
+CREATE TABLE coffee_preparations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id varchar(100) NOT NULL,                    -- FK to users tabl
+    user_id varchar(100) NOT NULL,                    -- FK to users table
     coffee_id UUID NOT NULL,                    -- FK to coffees table
     method_dictionary_id UUID NOT NULL,         -- FK to dictionary (type = 'method')
     temperature_dictionary_id UUID NOT NULL,    -- FK to dictionary (type = 'temperature')
     ratio_dictionary_id UUID NOT NULL,          -- FK to dictionary (type = 'ratio')
+    grind_dictionary_id UUID NOT NULL,          -- FK to dictionary (type = 'grind')
     ranking NUMERIC(2,1) NOT NULL,               -- Ranking from 0.0 to 5.0
     notes JSONB,                                -- JSON array of words (e.g., ['fruity', 'sweet'])
     comments TEXT,                              -- Text field for additional comments
@@ -145,5 +146,7 @@ DROP TABLE coffee_preparations;
     CONSTRAINT fk_temperature_dictionary
         FOREIGN KEY (temperature_dictionary_id) REFERENCES dictionary(id),
     CONSTRAINT fk_ratio_dictionary
-        FOREIGN KEY (ratio_dictionary_id) REFERENCES dictionary(id)
+        FOREIGN KEY (ratio_dictionary_id) REFERENCES dictionary(id),
+    CONSTRAINT fk_grind_dictionary
+        FOREIGN KEY (grind_dictionary_id) REFERENCES dictionary(id)
 );

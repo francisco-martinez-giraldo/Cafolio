@@ -11,7 +11,8 @@ export class CoffeePreparationsService {
         coffee:coffees(*),
         method:dictionary!method_dictionary_id(*),
         temperature:dictionary!temperature_dictionary_id(*),
-        ratio:dictionary!ratio_dictionary_id(*)
+        ratio:dictionary!ratio_dictionary_id(*),
+        grind:dictionary!grind_dictionary_id(*)
       `
       )
       .eq("user_id", userId)
@@ -35,7 +36,8 @@ export class CoffeePreparationsService {
         coffee:coffees(*),
         method:dictionary!method_dictionary_id(*),
         temperature:dictionary!temperature_dictionary_id(*),
-        ratio:dictionary!ratio_dictionary_id(*)
+        ratio:dictionary!ratio_dictionary_id(*),
+        grind:dictionary!grind_dictionary_id(*)
       `
       )
       .eq("id", id)
@@ -78,5 +80,26 @@ export class CoffeePreparationsService {
       .eq("user_id", userId);
 
     if (error) throw error;
+  }
+
+  async getHistoryByCoffeeId(coffeeId: string, userId: string): Promise<CoffeePreparation[]> {
+    const { data, error } = await supabase
+      .from("coffee_preparations")
+      .select(
+        `
+        *,
+        method:dictionary!method_dictionary_id(*),
+        temperature:dictionary!temperature_dictionary_id(*),
+        ratio:dictionary!ratio_dictionary_id(*),
+        grind:dictionary!grind_dictionary_id(*)
+      `
+      )
+      .eq("coffee_id", coffeeId)
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .order("ranking", { ascending: false });
+
+    if (error) throw error;
+    return data || [];
   }
 }

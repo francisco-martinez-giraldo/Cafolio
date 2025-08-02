@@ -252,4 +252,23 @@ export class CoffeePreparationsController {
       res.status(500).json({ error: "Failed to delete coffee preparation" });
     }
   }
+
+  async getHistoryByCoffeeId(req: Request, res: Response) {
+    try {
+      const { coffeeId } = req.params;
+      const { user_id } = req.query;
+
+      if (!user_id) {
+        return res.status(400).json({ error: "user_id is required" });
+      }
+
+      const preparations = await this.coffeePreparationsService.getHistoryByCoffeeId(
+        coffeeId,
+        user_id as string
+      );
+      res.json(preparations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get preparation history" });
+    }
+  }
 }

@@ -52,3 +52,12 @@ export const useDeleteCoffeePreparation = () => {
     },
   });
 };
+
+// Export object for compatibility
+export const useCoffeePreparations = {
+  getByUserId: useCoffeePreparationsByUserId,
+  getById: useCoffeePreparationById,
+  create: useCreateCoffeePreparation,
+  update: useUpdateCoffeePreparation,
+  delete: useDeleteCoffeePreparation,
+};

@@ -71,6 +71,7 @@ export interface CoffeePreparation {
   method_dictionary_id: string;
   temperature_dictionary_id: string;
   ratio_dictionary_id: string;
+  grind_dictionary_id: string;
   ranking: number;
   notes?: string[];
   comments?: string;
@@ -79,6 +80,7 @@ export interface CoffeePreparation {
   method?: DictionaryItem;
   temperature?: DictionaryItem;
   ratio?: DictionaryItem;
+  grind?: DictionaryItem;
 }
 
 export interface CreateCoffeePreparationRequest {
@@ -87,6 +89,7 @@ export interface CreateCoffeePreparationRequest {
   method_dictionary_id: string;
   temperature_dictionary_id: string;
   ratio_dictionary_id: string;
+  grind_dictionary_id: string;
   ranking: number;
   notes?: string[];
   comments?: string;
@@ -96,6 +99,7 @@ export interface UpdateCoffeePreparationRequest {
   method_dictionary_id?: string;
   temperature_dictionary_id?: string;
   ratio_dictionary_id?: string;
+  grind_dictionary_id?: string;
   ranking?: number;
   notes?: string[];
   comments?: string;

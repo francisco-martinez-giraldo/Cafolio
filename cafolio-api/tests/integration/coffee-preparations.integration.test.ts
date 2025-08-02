@@ -40,6 +40,7 @@ describe('Coffee Preparations Integration Tests', () => {
       method_dictionary_id: dictIds.method_id,
       temperature_dictionary_id: dictIds.temperature_id,
       ratio_dictionary_id: dictIds.ratio_id,
+      grind_dictionary_id: dictIds.grind_id,
       ranking: 4.5,
       notes: ['Great extraction']
     };
@@ -72,6 +73,7 @@ describe('Coffee Preparations Integration Tests', () => {
       method_dictionary_id: dictIds.method_id,
       temperature_dictionary_id: dictIds.temperature_id,
       ratio_dictionary_id: dictIds.ratio_id,
+      grind_dictionary_id: dictIds.grind_id,
       ranking: 4.0,
       notes: ['Test preparation']
     };
@@ -106,6 +108,7 @@ describe('Coffee Preparations Integration Tests', () => {
       method_dictionary_id: dictIds.method_id,
       temperature_dictionary_id: dictIds.temperature_id,
       ratio_dictionary_id: dictIds.ratio_id,
+      grind_dictionary_id: dictIds.grind_id,
       ranking: 3.5,
       notes: ['Initial notes']
     };
@@ -140,6 +143,7 @@ describe('Coffee Preparations Integration Tests', () => {
       method_dictionary_id: dictIds.method_id,
       temperature_dictionary_id: dictIds.temperature_id,
       ratio_dictionary_id: dictIds.ratio_id,
+      grind_dictionary_id: dictIds.grind_id,
       ranking: 4.5,
       notes: ['To be deleted']
     };

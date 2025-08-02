@@ -35,4 +35,9 @@ export const coffeePreparationsService = {
     const userEmail = user?.email || "";
     await apiClient.delete(`/api/coffee-preparations/${id}?user_id=${userEmail}`);
   },
+
+  getHistoryByCoffeeId: async (coffeeId: string, userId: string): Promise<CoffeePreparation[]> => {
+    const { data } = await apiClient.get(`/api/coffee-preparations/history/${coffeeId}?user_id=${userId}`);
+    return data;
+  },
 };

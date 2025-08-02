@@ -26,8 +26,9 @@ export function CoffeeCard({ coffee, overallRating }: CoffeeCardProps) {
 
   const handleViewHistory = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // TODO: Navigate to history page
-    console.log("Ver historial");
+    if (coffee.id) {
+      router.push(`/history/${coffee.id}`);
+    }
   };
 
   const handleEdit = (e: React.MouseEvent) => {

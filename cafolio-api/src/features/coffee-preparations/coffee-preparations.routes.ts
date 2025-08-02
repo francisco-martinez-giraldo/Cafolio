@@ -9,5 +9,6 @@ router.get('/', coffeePreparationsController.getByUserId.bind(coffeePreparations
 router.post('/', coffeePreparationsController.create.bind(coffeePreparationsController));
 router.put('/:id', coffeePreparationsController.update.bind(coffeePreparationsController));
 router.delete('/:id', coffeePreparationsController.delete.bind(coffeePreparationsController));
+router.get('/history/:coffeeId', coffeePreparationsController.getHistoryByCoffeeId.bind(coffeePreparationsController));
 
 export { router as coffeePreparationsRoutes };

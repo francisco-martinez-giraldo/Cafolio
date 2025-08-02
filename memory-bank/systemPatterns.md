@@ -17,11 +17,17 @@
   /auth/
   /coffees/
   /preparations/
+  /history/          # Nueva funcionalidad
 /components/ui/
 /hooks/
 /services/
 /types/
 ```
+
+## Patrones de Navegación
+- **Parámetros de ruta**: coffee_id se pasa como parámetro para historial
+- **Estado compartido**: Información del café se mantiene en contexto
+- **Ordenamiento**: Preparaciones ordenadas por ranking DESC por defecto
 
 ## Patrones de Estado
 - Jotai para estado global
