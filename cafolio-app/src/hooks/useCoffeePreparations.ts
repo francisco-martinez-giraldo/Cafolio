@@ -33,8 +33,8 @@ export const useUpdateCoffeePreparation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateCoffeePreparationRequest }) =>
-      coffeePreparationsService.update(id, data),
+    mutationFn: ({ id, data, coffeeId }: { id: string; data: UpdateCoffeePreparationRequest; coffeeId: string }) =>
+      coffeePreparationsService.update(id, data, coffeeId),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["coffee-preparations", data.id] });
       queryClient.invalidateQueries({ queryKey: ["coffee-preparations", "user"] });
@@ -46,7 +46,8 @@ export const useDeleteCoffeePreparation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: coffeePreparationsService.delete,
+    mutationFn: ({ id, coffeeId }: { id: string; coffeeId: string }) =>
+      coffeePreparationsService.delete(id, coffeeId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["coffee-preparations"] });
     },

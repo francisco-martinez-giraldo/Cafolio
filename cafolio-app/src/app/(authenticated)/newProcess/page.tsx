@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useCoffeeById } from "@/hooks/useCoffees";
 import { useCreateCoffeePreparation } from "@/hooks/useCoffeePreparations";
-import { getUser } from "@/lib/auth";
+import { useAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProcessStep1 } from "@/components/ProcessSteps/ProcessStep1";
 import { ProcessStep2 } from "@/components/ProcessSteps/ProcessStep2";
@@ -33,6 +33,7 @@ export default function NewProcessPage() {
     generalNotes: "",
   });
   const searchParams = useSearchParams();
+  const { user } = useAuth();
 
   const coffeeId = searchParams.get("coffeeId");
   const { data: coffeeData } = useCoffeeById(coffeeId || "");
@@ -57,7 +58,6 @@ export default function NewProcessPage() {
 
   const handleStep2Complete = async (data: ProcessStepData) => {
     const finalData = { ...processData, ...data };
-    const user = getUser();
 
     if (!user?.email || !coffeeId) return;
 

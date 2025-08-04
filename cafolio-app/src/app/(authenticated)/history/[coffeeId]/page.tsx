@@ -4,13 +4,10 @@ import { useParams } from "next/navigation";
 import { useCoffeeById } from "@/hooks/useCoffees";
 import { usePreparationHistory } from "@/hooks/usePreparationHistory";
 import { PreparationHistoryCard } from "@/components/PreparationHistoryCard";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function HistoryPage() {
   const params = useParams();
-  const router = useRouter();
   const coffeeId = params.coffeeId as string;
 
   const { data: coffee, isLoading: coffeeLoading } = useCoffeeById(coffeeId);
@@ -32,8 +29,10 @@ export default function HistoryPage() {
           {/* Coffee Info Header */}
           <div className="flex items-center gap-4">
             {coffee.photo_path && (
-              <img
+              <Image
                 src={coffee.photo_path}
+                width={100}
+                height={100}
                 alt={`${coffee.brand?.value} ${coffee.variety?.value}`}
                 className="w-20 h-20 rounded-xl object-cover"
               />

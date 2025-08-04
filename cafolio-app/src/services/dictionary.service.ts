@@ -3,7 +3,7 @@ import { DictionaryItem, CreateDictionaryRequest, DictionaryType } from '@/types
 
 export const dictionaryService = {
   getByType: async (type: DictionaryType): Promise<DictionaryItem[]> => {
-    const { data } = await apiClient.get(`/api/dictionary?type=${type}`);
+    const { data } = await apiClient.get(`/api/dictionary/${type}`);
     return data;
   },
 

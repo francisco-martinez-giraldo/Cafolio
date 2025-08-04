@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, Calendar } from "lucide-react";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 
 interface PreparationHistoryCardProps {
   preparation: CoffeePreparation;
@@ -65,7 +66,9 @@ export function PreparationHistoryCard({ preparation }: PreparationHistoryCardPr
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             {preparation.method?.image_url && (
-              <img
+              <Image
+                width={100}
+                height={100}
                 src={preparation.method.image_url}
                 alt={preparation.method.value}
                 className={` w-8 h-8 rounded-lg object-cover ${

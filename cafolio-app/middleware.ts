@@ -5,29 +5,19 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
   // Rutas públicas que no requieren autenticación
-  const publicPaths = ['/login', '/'];
+  const publicPaths = ['/login', '/auth/callback'];
   
   // Si es una ruta pública, permitir acceso
   if (publicPaths.includes(pathname)) {
     return NextResponse.next();
   }
   
-  // Verificar si hay sesión en las cookies
-  const sessionCookie = request.cookies.get('cafolio_session');
+  // Verificar si hay token de auth en las cookies
+  const authToken = request.cookies.get('auth_token');
   
-  // Si no hay sesión y está intentando acceder a ruta protegida
-  if (!sessionCookie?.value && !publicPaths.includes(pathname)) {
+  // Si no hay token y está intentando acceder a ruta protegida
+  if (!authToken?.value && !publicPaths.includes(pathname)) {
     return NextResponse.redirect(new URL('/login', request.url));
-  }
-  
-  // Si hay sesión, verificar que sea válida
-  if (sessionCookie?.value) {
-    try {
-      JSON.parse(sessionCookie.value);
-    } catch {
-      // Cookie corrupta, redirigir a login
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
   }
   
   return NextResponse.next();

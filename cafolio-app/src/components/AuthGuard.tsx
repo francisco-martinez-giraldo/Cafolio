@@ -9,7 +9,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   
-  const publicPaths = ['/login', '/'];
+  const publicPaths = ['/login', '/', '/auth/callback'];
   const isPublicPath = publicPaths.includes(pathname);
 
   useEffect(() => {

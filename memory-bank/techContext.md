@@ -167,6 +167,153 @@ interface CreateCoffeePreparationRequest {
 - `gap-*` - Espaciado moderno
 - `flex-wrap` - Responsive design
 
+## 🛠️ PLAN DE MIGRACIÓN: EXPRESS API → NEXT.JS API ROUTES
+
+### 🎯 Objetivo
+Migrar `cafolio-api` (Express + Swagger) a Next.js API Routes dentro de `cafolio-app` para deploy unificado.
+
+### 📋 Fases de Migración
+
+#### **FASE 1: Preparación y Setup**
+1. **Crear estructura de API en cafolio-app**
+   ```
+   cafolio-app/src/app/api/
+   ├── auth/
+   │   ├── login/route.ts
+   │   ├── register/route.ts
+   │   ├── logout/route.ts
+   │   └── me/route.ts
+   ├── coffees/
+   │   ├── route.ts (GET, POST)
+   │   ├── recent/route.ts
+   │   └── [id]/
+   │       ├── route.ts (GET, PUT, DELETE)
+   │       └── preparations/
+   │           ├── route.ts (GET, POST)
+   │           └── [prepId]/route.ts
+   ├── coffee-preparations/
+   │   └── history/
+   │       └── [coffeeId]/route.ts
+   ├── dictionary/
+   │   └── [type]/route.ts
+   └── storage/
+       └── upload/route.ts
+   ```
+
+2. **Migrar configuración y tipos**
+   - Mover `src/config/supabase.ts` a `cafolio-app/src/lib/supabase-server.ts`
+   - Migrar `src/types/index.ts` a `cafolio-app/src/types/api.ts`
+   - Actualizar variables de entorno en `cafolio-app/.env.local`
+
+#### **FASE 2: Migración de Servicios**
+3. **Migrar lógica de negocio**
+   ```
+   cafolio-app/src/lib/services/
+   ├── auth-service.ts
+   ├── coffee-service.ts
+   ├── coffee-preparations-service.ts
+   ├── dictionary-service.ts
+   └── storage-service.ts
+   ```
+   - Convertir controllers de Express a funciones puras
+   - Mantener la misma lógica de validación con Zod
+   - Preservar manejo de errores y responses
+
+4. **Migrar middleware y utilidades**
+   ```
+   cafolio-app/src/lib/middleware/
+   ├── auth-middleware.ts
+   ├── error-handler.ts
+   └── validation.ts
+   ```
+
+#### **FASE 3: Implementación de API Routes**
+5. **Crear API Routes por módulo**
+   - **Auth**: 4 endpoints (login, register, logout, me)
+   - **Coffees**: 6 endpoints (CRUD + recent + preparations)
+   - **Coffee Preparations**: 4 endpoints (CRUD + history)
+   - **Dictionary**: 1 endpoint (get by type)
+   - **Storage**: 1 endpoint (upload)
+
+6. **Patrón de implementación por endpoint**
+   ```typescript
+   // Ejemplo: app/api/coffees/route.ts
+   import { NextRequest, NextResponse } from 'next/server'
+   import { coffeeService } from '@/lib/services/coffee-service'
+   import { authMiddleware } from '@/lib/middleware/auth-middleware'
+   
+   export async function GET(request: NextRequest) {
+     try {
+       const user = await authMiddleware(request)
+       const coffees = await coffeeService.getAllByUser(user.id)
+       return NextResponse.json(coffees)
+     } catch (error) {
+       return NextResponse.json({ error: error.message }, { status: 500 })
+     }
+   }
+   ```
+
+#### **FASE 4: Migración de Tests**
+7. **Adaptar tests existentes**
+   ```
+   cafolio-app/tests/api/
+   ├── auth.test.ts
+   ├── coffees.test.ts
+   ├── coffee-preparations.test.ts
+   ├── dictionary.test.ts
+   └── storage.test.ts
+   ```
+   - Cambiar de `supertest` a `@testing-library/react` + `msw`
+   - Mantener misma cobertura de pruebas (100%)
+   - Adaptar mocks para Next.js API Routes
+
+#### **FASE 5: Documentación y Limpieza**
+8. **Reemplazar Swagger con alternativa Next.js**
+   - Evaluar `next-swagger-doc` o documentación manual
+   - Mantener especificaciones OpenAPI existentes
+   - Generar docs automáticas desde tipos TypeScript
+
+9. **Actualización de servicios frontend**
+   - Cambiar base URL de API calls de `localhost:3001` a `/api`
+   - Verificar que todos los servicios funcionen correctamente
+   - Mantener misma interfaz de servicios existente
+
+10. **Limpieza final**
+    - Eliminar carpeta `cafolio-api/` completa
+    - Actualizar scripts de package.json
+    - Actualizar README y documentación
+
+### 📅 Estimación de Tiempo
+- **Fase 1-2**: 2-3 horas (setup y migración de servicios)
+- **Fase 3**: 3-4 horas (implementación de 16 endpoints)
+- **Fase 4**: 2 horas (migración de tests)
+- **Fase 5**: 1-2 horas (docs y limpieza)
+- **Total**: 8-11 horas de trabajo
+
+### ⚠️ Riesgos y Consideraciones
+1. **Compatibilidad de middleware**: Next.js maneja middleware diferente a Express
+2. **File uploads**: Adaptar multer a Next.js FormData handling
+3. **Error handling**: Ajustar responses para cumplir estándares Next.js
+4. **Environment variables**: Sincronizar variables entre proyectos
+5. **Testing**: Cambio significativo en approach de testing
+
+### ✅ Beneficios Esperados
+- 🚀 **Deploy unificado**: Una sola aplicación en Vercel
+- 💰 **Costo reducido**: Eliminar servidor separado para API
+- 🔧 **Mantenimiento simplificado**: Un solo proyecto
+- ⚡ **Performance**: API co-located con frontend
+- 🔒 **Seguridad**: Mejor integración con Next.js auth patterns
+
+### 📋 Checklist de Validación Post-Migración
+- [ ] Todos los endpoints responden correctamente
+- [ ] Tests pasan al 100%
+- [ ] Frontend funciona sin cambios
+- [ ] File uploads funcionan
+- [ ] Autenticación funciona
+- [ ] Variables de entorno configuradas
+- [ ] Documentación actualizada
+- [ ] Deploy exitoso en Vercel
+
 ## 🎯 Estado Técnico Actual
 - ✅ Base de datos actualizada con grind
 - ✅ APIs funcionando con nuevos campos
@@ -174,3 +321,4 @@ interface CreateCoffeePreparationRequest {
 - ✅ Tests pasando al 100%
 - ✅ UI optimizada con Shadcn
 - ✅ Código limpio y mantenible
+- 📋 **Plan de migración API documentado y listo**

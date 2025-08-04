@@ -1,43 +1,34 @@
 import { apiClient } from "@/lib/api";
-import { getUser } from "@/lib/auth";
 import { CoffeePreparation, CreateCoffeePreparationRequest, UpdateCoffeePreparationRequest } from "@/types/api";
 
 export const coffeePreparationsService = {
   getByUserId: async (coffeeId?: string): Promise<CoffeePreparation[]> => {
-    const user = getUser();
-    const userEmail = user?.email || "";
-    const coffeeParam = coffeeId ? `&coffee_id=${coffeeId}` : "";
-    const { data } = await apiClient.get(`/api/coffee-preparations?user_id=${userEmail}${coffeeParam}`);
+    const endpoint = coffeeId ? `/api/coffees/${coffeeId}/preparations` : `/api/coffee-preparations`;
+    const { data } = await apiClient.get(endpoint);
     return data;
   },
 
   getById: async (id: string): Promise<CoffeePreparation> => {
-    const user = getUser();
-    const userEmail = user?.email || "";
-    const { data } = await apiClient.get(`/api/coffee-preparations/${id}?user_id=${userEmail}`);
+    const { data } = await apiClient.get(`/api/coffee-preparations/${id}`);
     return data;
   },
 
   create: async (preparation: CreateCoffeePreparationRequest): Promise<CoffeePreparation> => {
-    const { data } = await apiClient.post("/api/coffee-preparations", preparation);
+    const { data } = await apiClient.post(`/api/coffees/${preparation.coffee_id}/preparations`, preparation);
     return data;
   },
 
-  update: async (id: string, preparation: UpdateCoffeePreparationRequest): Promise<CoffeePreparation> => {
-    const user = getUser();
-    const userEmail = user?.email || "";
-    const { data } = await apiClient.put(`/api/coffee-preparations/${id}?user_id=${userEmail}`, preparation);
+  update: async (id: string, preparation: UpdateCoffeePreparationRequest, coffeeId: string): Promise<CoffeePreparation> => {
+    const { data } = await apiClient.put(`/api/coffees/${coffeeId}/preparations/${id}`, preparation);
     return data;
   },
 
-  delete: async (id: string): Promise<void> => {
-    const user = getUser();
-    const userEmail = user?.email || "";
-    await apiClient.delete(`/api/coffee-preparations/${id}?user_id=${userEmail}`);
+  delete: async (id: string, coffeeId: string): Promise<void> => {
+    await apiClient.delete(`/api/coffees/${coffeeId}/preparations/${id}`);
   },
 
-  getHistoryByCoffeeId: async (coffeeId: string, userId: string): Promise<CoffeePreparation[]> => {
-    const { data } = await apiClient.get(`/api/coffee-preparations/history/${coffeeId}?user_id=${userId}`);
+  getHistoryByCoffeeId: async (coffeeId: string): Promise<CoffeePreparation[]> => {
+    const { data } = await apiClient.get(`/api/coffee-preparations/history/${coffeeId}`);
     return data;
   },
 };

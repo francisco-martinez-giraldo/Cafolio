@@ -126,36 +126,46 @@ export function CoffeeForm() {
     if (!isEditing && !selectedFile) return; // Solo requerir imagen nueva para creación
 
     try {
-      let photoPath = existingCoffee?.photo_path || "";
-
-      // Subir nueva imagen si se seleccionó una
-      if (selectedFile) {
-        const uploadResult = await uploadImage.mutateAsync({
-          file: selectedFile,
-          folder: "coffees",
-        });
-        photoPath = uploadResult.url;
-      }
-
-      const coffeeData = {
-        brand_dictionary_id: data.brand,
-        variety_dictionary_id: data.variety,
-        process_dictionary_id: data.process,
-        price: Number(data.price.replace(/[^\d]/g, "")),
-        region: data.region || "",
-        farm: data.finca || "",
-        notes: data.notes || "",
-        photo_path: photoPath,
-      };
-
       if (isEditing && editId) {
+        let photoPath = existingCoffee?.photo_path || "";
+
+        // Subir nueva imagen si se seleccionó una (solo para edición)
+        if (selectedFile) {
+          const uploadResult = await uploadImage.mutateAsync({
+            file: selectedFile,
+            folder: "coffees",
+          });
+          photoPath = uploadResult.path;
+        }
+        const coffeeData = {
+          brand_dictionary_id: data.brand,
+          variety_dictionary_id: data.variety,
+          process_dictionary_id: data.process,
+          price: Number(data.price.replace(/[^\d]/g, "")),
+          region: data.region || "",
+          farm: data.finca || "",
+          notes: data.notes || "",
+          photo_path: photoPath,
+        };
         await updateCoffee.mutateAsync({ id: editId, data: coffeeData });
       } else {
-        const createData: CreateCoffeeRequest = {
-          user_id: user.email,
-          ...coffeeData,
-        };
-        await createCoffee.mutateAsync(createData);
+        // Para crear, usar FormData con imagen
+        if (!selectedFile) {
+          console.error('No file selected');
+          return;
+        }
+        
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('brand_dictionary_id', data.brand);
+        formData.append('variety_dictionary_id', data.variety);
+        formData.append('process_dictionary_id', data.process);
+        formData.append('price', data.price.replace(/[^\d]/g, ""));
+        formData.append('region', data.region || "");
+        formData.append('farm', data.finca || "");
+        formData.append('notes', data.notes || "");
+        
+        await createCoffee.mutateAsync(formData as unknown as CreateCoffeeRequest);
       }
 
       router.push("/home");

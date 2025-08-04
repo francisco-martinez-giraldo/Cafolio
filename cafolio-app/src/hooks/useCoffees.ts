@@ -17,11 +17,10 @@ export const useCoffeeById = (id: string) => {
   });
 };
 
-export const useCoffeesByUserId = (userId: string) => {
+export const useCoffeesByUserId = () => {
   return useQuery({
-    queryKey: ["coffees", "user", userId],
-    queryFn: () => coffeesService.getByUserId(userId),
-    enabled: !!userId,
+    queryKey: ["coffees"],
+    queryFn: () => coffeesService.getByUserId(),
   });
 };
 
