@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
   // Rutas públicas que no requieren autenticación
-  const publicPaths = ['/login', '/auth/callback'];
+  const publicPaths = ['/login', '/auth/callback', '/'];
   
   // Si es una ruta pública, permitir acceso
   if (publicPaths.includes(pathname)) {
@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
   const authToken = request.cookies.get('auth_token');
   
   // Si no hay token y está intentando acceder a ruta protegida
-  if (!authToken?.value && !publicPaths.includes(pathname)) {
+  if (!authToken?.value) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
   
