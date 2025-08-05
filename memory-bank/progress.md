@@ -6,7 +6,7 @@
 - ✅ Cuando cambio la foto de un coffee borrar la foto anterior con Photo_Path guardado utilizando la API NextJS
 - ✅ Cuando creo un nuevo metodo invalidar el cache o algo de ReactQuery para que se vea el nuevo de una
 - [] En el Home implementar la funcionalidad de ver mas para cargar los siguientes 10 cafes y si hay mas pues dejar el boton
-- [] Intentar llevar Unit Test y Integration Test a NextJS (Borrar Cafolio-api)
+- ✅ Intentar llevar Unit Test y Integration Test a NextJS (Borrar Cafolio-api)
 - [] Agregar Iconos para algunos dictionary como Molienda y que se vea mas ordenado
 - [] En Coffee preparations history agregar un boton para elimnar (con dialogo de confirmación)
 - [] En Coffee preparations history agregar un boton para editar y poder editarlo
