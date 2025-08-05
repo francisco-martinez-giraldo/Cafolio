@@ -34,7 +34,24 @@
 
 ### 🔧 Decisiones Técnicas Recientes
 
-#### 1. Manejo de Errores Mejorado
+#### 1. Patrón Obligatorio: React Query + Hooks
+
+- **Decisión:** SIEMPRE usar React Query hooks para operaciones async
+- **Razón:** Consistencia, manejo de estados, cache automático, retry logic
+- **Patrón:** `useMutation` para operaciones, `useQuery` para consultas
+- **Implementación:** Todos los servicios deben tener su hook correspondiente
+- **Ejemplo:** `useDeleteImage()`, `useUploadImage()`, `useCreateCoffee()`
+- **Estado:** ✅ Patrón establecido - NO usar llamados directos a servicios
+
+#### 2. Campo photo_id en Tabla Coffees
+
+- **Decisión:** Agregar campo `photo_id` obligatorio a tabla coffees
+- **Razón:** Identificador único para imágenes en Supabase Storage, separado de la URL pública
+- **Implementación:** Campo TEXT NOT NULL, auto-generado por backend
+- **Archivos afectados:** `api.ts` (tipos), `apiSpecs.md` (documentación)
+- **Estado:** ✅ Completado - Migration SQL + tipos frontend actualizados
+
+#### 2. Manejo de Errores Mejorado
 
 - **Cambio:** Eliminación de tipos `any` en catch blocks
 - **Implementación:** Type guards con `error instanceof Error`

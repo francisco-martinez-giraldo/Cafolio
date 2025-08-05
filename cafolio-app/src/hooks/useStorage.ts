@@ -7,3 +7,9 @@ export const useUploadImage = () => {
       storageService.uploadImage(file, folder),
   });
 };
+
+export const useDeleteImage = () => {
+  return useMutation({
+    mutationFn: (photoPath: string) => storageService.deleteImage(photoPath),
+  });
+};

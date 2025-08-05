@@ -54,7 +54,8 @@ export async function POST(request: NextRequest) {
       region: (formData.get("region") as string) || "",
       farm: (formData.get("farm") as string) || "",
       notes: (formData.get("notes") as string) || "",
-      photo_path: uploadResult.publicUrl,
+      photo_path: uploadResult.path,
+      public_url: uploadResult.publicUrl,
       user_id: user.id,
     };
 

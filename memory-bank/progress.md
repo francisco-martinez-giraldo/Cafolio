@@ -2,9 +2,10 @@
 
 ## TODO
 
-- [] Agregar en la tabla de Coffees el Id de la foto subida a Supabase Storage
-- [] Cuando cambio la foto de un coffee borrar la foto anterior con Id guardado, crear la API para borrar
+- ✅ Agregar en la tabla de Coffees el Id de la foto subida a Supabase Storage
+- ✅ Cuando cambio la foto de un coffee borrar la foto anterior con Photo_Path guardado utilizando la API NextJS
 - [] Cuando creo un nuevo metodo invalidar el cache o algo de ReactQuery para que se vea el nuevo de una
+- [] En el Home implementar la funcionalidad de ver mas para cargar los siguientes 10 cafes y si hay mas pues dejar el boton
 - [] Intentar llevar Unit Test y Integration Test a NextJS (Borrar Cafolio-api)
 - [] Agregar Iconos para algunos dictionary como Molienda y que se vea mas ordenado
 - [] En Coffee preparations history agregar un boton para elimnar (con dialogo de confirmación)

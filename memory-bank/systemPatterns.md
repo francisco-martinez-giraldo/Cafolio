@@ -71,6 +71,38 @@ if (!user && !isPublicPath) {
 
 ## 📡 Manejo de Datos
 
+### 🔄 PATRÓN OBLIGATORIO: React Query + Hooks
+
+**REGLA FUNDAMENTAL:** Toda operación async DEBE usar React Query hooks
+
+#### ✅ Correcto:
+```typescript
+// Hook personalizado
+export const useDeleteImage = () => {
+  return useMutation({
+    mutationFn: (photoPath: string) => storageService.deleteImage(photoPath),
+  });
+};
+
+// Uso en componente
+const deleteImage = useDeleteImage();
+await deleteImage.mutateAsync(photoPath);
+```
+
+#### ❌ Incorrecto:
+```typescript
+// NO hacer llamados directos a servicios
+const { storageService } = await import("@/services/storage.service");
+await storageService.deleteImage(photoPath);
+```
+
+#### Beneficios del Patrón:
+- **Estados automáticos:** `isPending`, `error`, `isSuccess`
+- **Cache inteligente:** Evita requests duplicados
+- **Retry logic:** Reintentos automáticos en fallos
+- **Consistencia:** Mismo patrón en toda la app
+- **UX mejorada:** Loading states granulares
+
 ### API Client Pattern
 ```typescript
 // Axios interceptor for auth

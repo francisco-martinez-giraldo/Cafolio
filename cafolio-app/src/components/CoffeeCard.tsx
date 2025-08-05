@@ -67,12 +67,12 @@ export function CoffeeCard({ coffee, overallRating }: CoffeeCardProps) {
     <Card className="p-4 space-y-0">
       <div className="flex gap-6">
         <div className="w-32 h-32 bg-muted rounded-xl flex items-center justify-center relative flex-shrink-0">
-          {coffee.photo_path && !imageError ? (
+          {coffee.public_url && !imageError ? (
             <>
               {imageLoading && <Skeleton className="w-full h-full absolute inset-0 rounded-xl" />}
               <Image
                 loading="lazy"
-                src={coffee.photo_path}
+                src={coffee.public_url}
                 alt={`${coffee.brand?.value} ${coffee.variety?.value}`}
                 width={128}
                 height={128}

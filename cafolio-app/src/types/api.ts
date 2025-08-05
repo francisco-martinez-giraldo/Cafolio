@@ -30,6 +30,7 @@ export interface Coffee {
   variety_dictionary_id: string;
   process_dictionary_id: string;
   photo_path: string;
+  public_url: string;
   region?: string;
   farm?: string;
   price?: number;
@@ -47,6 +48,7 @@ export interface CreateCoffeeRequest {
   variety_dictionary_id: string;
   process_dictionary_id: string;
   photo_path: string;
+  public_url: string;
   region?: string;
   farm?: string;
   price?: number;
@@ -58,6 +60,7 @@ export interface UpdateCoffeeRequest {
   variety_dictionary_id?: string;
   process_dictionary_id?: string;
   photo_path?: string;
+  public_url?: string;
   region?: string;
   farm?: string;
   price?: number;

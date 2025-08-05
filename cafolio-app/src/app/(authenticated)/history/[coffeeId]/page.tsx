@@ -28,9 +28,9 @@ export default function HistoryPage() {
         <div className="px-6 py-6">
           {/* Coffee Info Header */}
           <div className="flex items-center gap-4">
-            {coffee.photo_path && (
+            {coffee.public_url && (
               <Image
-                src={coffee.photo_path}
+                src={coffee.public_url}
                 width={100}
                 height={100}
                 alt={`${coffee.brand?.value} ${coffee.variety?.value}`}

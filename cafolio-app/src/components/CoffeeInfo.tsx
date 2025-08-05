@@ -10,9 +10,9 @@ export function CoffeeInfo({ selectedCoffee }: CoffeeInfoProps) {
     <div className="border rounded p-4">
       <div className="flex gap-4">
         <div className="w-32 h-32 bg-muted rounded-xl flex items-center justify-center relative flex-shrink-0">
-          {selectedCoffee?.photo_path ? (
+          {selectedCoffee?.public_url ? (
             <Image
-              src={selectedCoffee.photo_path}
+              src={selectedCoffee.public_url}
               alt={selectedCoffee.brand?.value ?? "Coffee Image"}
               loading="lazy"
               width={128}

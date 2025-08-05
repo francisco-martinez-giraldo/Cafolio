@@ -12,7 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { DictionarySelect } from "@/components/ui/DictionarySelect";
 import { Camera } from "lucide-react";
 import { useCreateCoffee, useUpdateCoffee, useCoffeeById } from "@/hooks/useCoffees";
-import { useUploadImage } from "@/hooks/useStorage";
+import { useUploadImage, useDeleteImage } from "@/hooks/useStorage";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Form,
@@ -51,6 +51,7 @@ export function CoffeeForm() {
   const createCoffee = useCreateCoffee();
   const updateCoffee = useUpdateCoffee();
   const uploadImage = useUploadImage();
+  const deleteImage = useDeleteImage();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -76,14 +77,14 @@ export function CoffeeForm() {
           variety: existingCoffee.variety_dictionary_id,
           process: existingCoffee.process_dictionary_id,
           price: existingCoffee.price ? formatPrice(existingCoffee.price.toString()) : "",
-          image: existingCoffee.photo_path ? "existing" : "",
+          image: existingCoffee.public_url ? "existing" : "",
           region: existingCoffee.region || "",
           finca: existingCoffee.farm || "",
           notes: existingCoffee.notes || "",
         });
 
-        if (existingCoffee.photo_path) {
-          setImagePreview(existingCoffee.photo_path);
+        if (existingCoffee.public_url) {
+          setImagePreview(existingCoffee.public_url);
         }
       }, 100);
 
@@ -128,14 +129,25 @@ export function CoffeeForm() {
     try {
       if (isEditing && editId) {
         let photoPath = existingCoffee?.photo_path || "";
+        let publicUrl = existingCoffee?.public_url || "";
 
         // Subir nueva imagen si se seleccionó una (solo para edición)
         if (selectedFile) {
+          // Borrar imagen anterior si existe
+          if (existingCoffee?.photo_path) {
+            try {
+              await deleteImage.mutateAsync(existingCoffee.photo_path);
+            } catch (error) {
+              console.warn("Error deleting old image:", error);
+            }
+          }
+          
           const uploadResult = await uploadImage.mutateAsync({
             file: selectedFile,
             folder: "coffees",
           });
           photoPath = uploadResult.path;
+          publicUrl = uploadResult.publicUrl;
         }
         const coffeeData = {
           brand_dictionary_id: data.brand,
@@ -146,6 +158,7 @@ export function CoffeeForm() {
           farm: data.finca || "",
           notes: data.notes || "",
           photo_path: photoPath,
+          public_url: publicUrl,
         };
         await updateCoffee.mutateAsync({ id: editId, data: coffeeData });
       } else {
@@ -350,9 +363,11 @@ export function CoffeeForm() {
           <Button
             type="submit"
             className="w-full mt-6 cursor-pointer"
-            disabled={uploadImage.isPending || createCoffee.isPending || updateCoffee.isPending}
+            disabled={uploadImage.isPending || createCoffee.isPending || updateCoffee.isPending || deleteImage.isPending}
           >
-            {uploadImage.isPending
+            {deleteImage.isPending
+              ? "Eliminando imagen anterior..."
+              : uploadImage.isPending
               ? "Subiendo imagen..."
               : createCoffee.isPending || updateCoffee.isPending
               ? isEditing
@@ -363,9 +378,11 @@ export function CoffeeForm() {
               : "Guardar Café"}
           </Button>
 
-          {(uploadImage.error || createCoffee.error || updateCoffee.error) && (
+          {(uploadImage.error || createCoffee.error || updateCoffee.error || deleteImage.error) && (
             <div className="text-sm text-destructive mt-2 text-center">
-              {uploadImage.error
+              {deleteImage.error
+                ? "Error al eliminar imagen anterior. Continuando..."
+                : uploadImage.error
                 ? "Error al subir la imagen. Intenta nuevamente."
                 : createCoffee.error || updateCoffee.error
                 ? `Error al ${isEditing ? "actualizar" : "guardar"} el café. Intenta nuevamente.`
