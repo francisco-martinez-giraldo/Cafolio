@@ -7,6 +7,11 @@ const nextConfig = {
         hostname: 'rdtutjzejojnhpcmyqqx.supabase.co',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cafolio.vercel.app',
+        pathname: '/**',
+      },
     ],
   },
 };
