@@ -22,8 +22,9 @@ export const useCreateCoffeePreparation = () => {
 
   return useMutation({
     mutationFn: coffeePreparationsService.create,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["coffee-preparations"] });
+      queryClient.invalidateQueries({ queryKey: ["preparation-history", data.coffee_id] });
       queryClient.invalidateQueries({ queryKey: ["coffees", "recent"] });
     },
   });
@@ -38,6 +39,7 @@ export const useUpdateCoffeePreparation = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["coffee-preparations", data.id] });
       queryClient.invalidateQueries({ queryKey: ["coffee-preparations", "user"] });
+      queryClient.invalidateQueries({ queryKey: ["preparation-history", data.coffee_id] });
     },
   });
 };
@@ -48,8 +50,9 @@ export const useDeleteCoffeePreparation = () => {
   return useMutation({
     mutationFn: ({ id, coffeeId }: { id: string; coffeeId: string }) =>
       coffeePreparationsService.delete(id, coffeeId),
-    onSuccess: () => {
+    onSuccess: (_, { coffeeId }) => {
       queryClient.invalidateQueries({ queryKey: ["coffee-preparations"] });
+      queryClient.invalidateQueries({ queryKey: ["preparation-history", coffeeId] });
     },
   });
 };
