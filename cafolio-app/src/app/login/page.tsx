@@ -26,7 +26,7 @@ export default function LoginPage() {
             <Image
               width={256}
               height={256}
-              src="/Cafolio/Cafolio-Fondo.png"
+              src="/cafolio/Cafolio-Fondo.png"
               alt="Cafolio Logo"
               className="mx-auto h-64 w-auto rounded-md"
             />
