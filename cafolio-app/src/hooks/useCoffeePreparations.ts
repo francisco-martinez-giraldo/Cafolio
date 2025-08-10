@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { coffeePreparationsService } from "@/services/coffee-preparations.service";
-import { UpdateCoffeePreparationRequest } from "@/types/api";
+import { UpdateCoffeePreparationRequest, CoffeePreparation } from "@/types/api";
 
 export const useCoffeePreparationsByUserId = (coffeeId?: string) => {
   return useQuery({
@@ -50,9 +50,26 @@ export const useDeleteCoffeePreparation = () => {
   return useMutation({
     mutationFn: ({ id, coffeeId }: { id: string; coffeeId: string }) =>
       coffeePreparationsService.delete(id, coffeeId),
+    onMutate: async ({ id, coffeeId }) => {
+      await queryClient.cancelQueries({ queryKey: ["preparation-history", coffeeId] });
+      
+      const previousData = queryClient.getQueryData(["preparation-history", coffeeId]);
+      
+      queryClient.setQueryData(["preparation-history", coffeeId], (old: CoffeePreparation[]) =>
+        old?.filter(prep => prep.id !== id) || []
+      );
+      
+      return { previousData };
+    },
+    onError: (err, { coffeeId }, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(["preparation-history", coffeeId], context.previousData);
+      }
+    },
     onSuccess: (_, { coffeeId }) => {
       queryClient.invalidateQueries({ queryKey: ["coffee-preparations"] });
       queryClient.invalidateQueries({ queryKey: ["preparation-history", coffeeId] });
+      queryClient.invalidateQueries({ queryKey: ["coffees", "recent"] });
     },
   });
 };

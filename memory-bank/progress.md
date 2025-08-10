@@ -8,7 +8,7 @@
 - [] En el Home implementar la funcionalidad de ver mas para cargar los siguientes 10 cafes y si hay mas pues dejar el boton
 - ✅ Intentar llevar Unit Test y Integration Test a NextJS (Borrar Cafolio-api)
 - [] Agregar Iconos para algunos dictionary como Molienda y que se vea mas ordenado
-- [] En Coffee preparations history agregar un boton para elimnar (con dialogo de confirmación)
+- ✅ En Coffee preparations history agregar un boton para elimnar (con dialogo de confirmación)
 - [] En Coffee preparations history agregar un boton para editar y poder editarlo
 - [] En Editar Coffee permitir eliminar un cafe, avisar que tiene x preparations que si esta seguro porque tambien se va borrar y borrar ambas cosas, incluyendo la imagen en el Storage
 - [] El Icono de la foto a la izq, ahora abre un menu con varias opciones
@@ -17,6 +17,61 @@
   - [] Editar Diccionario
 - [] Crear Pantalla para editar, agregar o eliminar Diccionario, incluyendo imagenes
 - [] Cafes Favoritos (Dashboard) con Filtros y listado de los cafes ordenados por mayor a menor calificacion (ver imagen 3)
+
+## 📅 09 Enero 2025
+
+### 09 de Enero 2025 - ✅ BOTONES DE ACCIÓN EN HISTORIAL
+
+#### 🎯 Funcionalidad Implementada
+
+**Botones de Acción en PreparationHistoryCard:**
+- **📅 Calendario:** Tooltip con fecha completa de la preparación
+- **✏️ Editar:** Placeholder deshabilitado para futuro desarrollo
+- **🗑️ Eliminar:** Funcional con diálogo de confirmación
+
+#### 🔧 Implementación Técnica
+
+##### 1. Componentes UI Utilizados
+- `AlertDialog` de Shadcn para confirmación de eliminación
+- `Tooltip` para información contextual en hover
+- `Button` con variantes ghost para iconos discretos
+- **Framer Motion** para animaciones profesionales
+
+##### 2. Hook de Eliminación Optimizado
+- `useDeleteCoffeePreparation` con **optimistic update**
+- **onMutate:** Eliminación inmediata de UI
+- **onError:** Reversión automática si falla
+- **onSuccess:** Invalidación de cache (historial + home)
+- Estados de loading con `isPending` nativo
+
+##### 3. Animaciones Profesionales
+- **Exit animation:** `opacity: 0, scale: 0.8, y: -20`
+- **Duración:** 300ms con `easeInOut`
+- **Layout:** Transiciones automáticas entre elementos
+- **AnimatePresence:** Detección automática de elementos eliminados
+
+##### 4. UX/UI Optimizada
+- Iconos posicionados en esquina superior derecha
+- No interfieren con información principal de la card
+- Hover states diferenciados (destructive para eliminar)
+- Feedback visual instantáneo con animaciones suaves
+
+#### 📁 Archivos Modificados
+- `PreparationHistoryCard.tsx` - Iconos + Framer Motion
+- `history/[coffeeId]/page.tsx` - AnimatePresence wrapper
+- `useCoffeePreparations.ts` - Optimistic update
+- `package.json` - Framer Motion dependency
+- `activeContext.md` - Documentación actualizada
+- `progress.md` - Tarea completada
+
+#### 🎨 Patrón UX Establecido
+```
+┌─────────────────────────────────────────┐
+│ ⭐⭐⭐⭐⭐ 5              📅 ✏️ 🗑️ │
+│ ⏳ Chemex  🌡️ 96°C  📊 1:18  ⚙️ Media │
+│ [Cítrico] [Frutal] [Especias]          │
+└─────────────────────────────────────────┘
+```
 
 ## 📅 05 Agosto 2025
 
@@ -218,5 +273,5 @@
 
 ---
 
-**Última actualización:** 04 de Agosto 2025
-**Estado:** ✅ PROYECTO CORE COMPLETADO - Listo para mejoras y deploy
+**Última actualización:** 09 de Enero 2025
+**Estado:** ✅ PROYECTO CORE COMPLETADO - Funcionalidad de eliminación en historial agregada

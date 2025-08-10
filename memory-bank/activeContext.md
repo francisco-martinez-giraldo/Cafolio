@@ -34,7 +34,15 @@
 
 ### 🔧 Decisiones Técnicas Recientes
 
-#### 1. Patrón Obligatorio: React Query + Hooks
+#### 1. Animaciones con Framer Motion
+
+- **Decisión:** Usar Framer Motion para animaciones profesionales
+- **Implementación:** `motion.div` + `AnimatePresence` para exit animations
+- **Beneficios:** Animaciones suaves, optimistic updates, física natural
+- **Patrón:** Eliminar → Animación inmediata → Optimistic update → Reversión si falla
+- **Estado:** ✅ Implementado - Eliminación de preparaciones con efecto profesional
+
+#### 2. Patrón Obligatorio: React Query + Hooks
 
 - **Decisión:** SIEMPRE usar React Query hooks para operaciones async
 - **Razón:** Consistencia, manejo de estados, cache automático, retry logic
@@ -153,19 +161,55 @@ Si no: Update solo datos → Redirect
 - **Implementación:** `UploadImageResponse`, `CreateCoffeeRequest`, etc.
 - **Beneficio:** Detección temprana de errores de tipos
 
+#### 4. Sistema de Preparaciones con Historial
+
+- **Implementación:** CRUD completo de preparaciones con historial por café
+- **Flujo:** Crear preparación → Ver en historial → Eliminar con confirmación
+- **Archivos clave:**
+  - `/api/coffees/[id]/preparations/[prepId]/route.ts` - DELETE endpoint
+  - `PreparationHistoryCard.tsx` - Card con iconos de acción
+  - `useDeleteCoffeePreparation` - Hook para eliminación
+- **UX:** Iconos de calendario (info), editar (placeholder), eliminar (funcional)
+
+### 🎯 Funcionalidad Recién Implementada
+
+#### Botones de Acción en Historial de Preparaciones
+
+- **Fecha:** 09/01/2025
+- **Implementación:** Tres iconos en esquina superior derecha de cada card
+- **Funcionalidades:**
+  - 📅 **Calendario:** Tooltip con fecha completa
+  - ✏️ **Editar:** Placeholder deshabilitado para futuro desarrollo
+  - 🗑️ **Eliminar:** Funcional con diálogo de confirmación
+- **Componentes:**
+  - `AlertDialog` de Shadcn para confirmación
+  - `Tooltip` para información contextual
+  - **Framer Motion** para animaciones profesionales
+- **Animaciones:**
+  - **Optimistic Update:** Eliminación inmediata de UI
+  - **Exit Animation:** Fade out + scale down + slide up (300ms)
+  - **Physics:** Easing natural con `easeInOut`
+  - **Layout:** Transiciones automáticas entre elementos
+- **UX:** Distribución que no interfiere con información principal
+
 ### 📋 Próximas Tareas Identificadas
 
-1. **Optimización de Imágenes**
+1. **Funcionalidad de Edición**
+
+   - Implementar edición de preparaciones existentes
+   - Formulario modal o página dedicada
+
+2. **Optimización de Imágenes**
 
    - Implementar compresión antes del upload
    - Múltiples tamaños (thumbnails)
 
-2. **Mejoras de UX**
+3. **Mejoras de UX**
 
    - Loading states más granulares
    - Error handling más específico
 
-3. **Performance**
+4. **Performance**
    - Lazy loading de imágenes
    - Caching de dictionary values
 

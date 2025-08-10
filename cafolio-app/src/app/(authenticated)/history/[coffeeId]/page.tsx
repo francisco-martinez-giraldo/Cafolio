@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useCoffeeById } from "@/hooks/useCoffees";
 import { usePreparationHistory } from "@/hooks/usePreparationHistory";
 import { PreparationHistoryCard } from "@/components/PreparationHistoryCard";
+import { AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
 export default function HistoryPage() {
@@ -54,15 +55,17 @@ export default function HistoryPage() {
 
       {/* Preparations List */}
       <div className="py-4 space-y-4">
-        {preparations && preparations.length > 0 ? (
-          preparations.map((preparation) => (
-            <PreparationHistoryCard key={preparation.id} preparation={preparation} />
-          ))
-        ) : (
-          <div className="text-center py-12 text-muted-foreground">
-            No hay preparaciones registradas para este café
-          </div>
-        )}
+        <AnimatePresence>
+          {preparations && preparations.length > 0 ? (
+            preparations.map((preparation) => (
+              <PreparationHistoryCard key={preparation.id} preparation={preparation} />
+            ))
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              No hay preparaciones registradas para este café
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
