@@ -5,12 +5,12 @@
 - ✅ Agregar en la tabla de Coffees el Id de la foto subida a Supabase Storage
 - ✅ Cuando cambio la foto de un coffee borrar la foto anterior con Photo_Path guardado utilizando la API NextJS
 - ✅ Cuando creo un nuevo metodo invalidar el cache o algo de ReactQuery para que se vea el nuevo de una
-- [] En el Home implementar la funcionalidad de ver mas para cargar los siguientes 10 cafes y si hay mas pues dejar el boton
 - ✅ Intentar llevar Unit Test y Integration Test a NextJS (Borrar Cafolio-api)
-- [] Agregar Iconos para algunos dictionary como Molienda y que se vea mas ordenado
 - ✅ En Coffee preparations history agregar un boton para elimnar (con dialogo de confirmación)
-- [] En Coffee preparations history agregar un boton para editar y poder editarlo
 - ✅ En Editar Coffee permitir eliminar un cafe, avisar que tiene x preparations que si esta seguro porque tambien se va borrar y borrar ambas cosas, incluyendo la imagen en el Storage
+- [] Agregar Iconos para algunos dictionary como Molienda y que se vea mas ordenado
+- [] En el Home implementar la funcionalidad de ver mas para cargar los siguientes 10 cafes y si hay mas pues dejar el boton
+- [] En Coffee preparations history agregar un boton para editar y poder editarlo
 - [] El Icono de la foto a la izq, ahora abre un menu con varias opciones
   - [] Editar Perfil
   - [] Cambiar Theme (System - Dark / Light)
@@ -25,11 +25,13 @@
 #### 🎯 Funcionalidades Implementadas
 
 **1. Botones de Acción en PreparationHistoryCard:**
+
 - **📅 Calendario:** Tooltip con fecha completa
 - **✏️ Editar:** Placeholder para futuro desarrollo
 - **🗑️ Eliminar:** Funcional con optimistic update
 
 **2. Eliminación de Cafés Completa:**
+
 - **Botón eliminar** en formulario de edición
 - **Diálogo de confirmación** con advertencia sobre preparaciones
 - **Eliminación en cascada:** Preparaciones → Imagen → Café
@@ -42,6 +44,7 @@
 #### 🔧 Implementación Técnica
 
 ##### 1. Hooks Pattern Reforzado
+
 - **🚨 REGLA CRÍTICA:** Solo hooks en frontend
 - **PROHIBIDO:** Imports directos de servicios en endpoints
 - **Hooks creados:**
@@ -51,24 +54,28 @@
   - `useDeleteImage` - Eliminar imagen del storage
 
 ##### 2. Arquitectura Correcta Establecida
+
 - **Frontend:** Lógica de negocio con hooks
 - **API Endpoints:** Solo orquestación simple
 - **Servicios:** Solo operaciones atómicas de datos
 - **Separación clara:** Cada capa con su responsabilidad
 
 ##### 3. Optimistic Updates Avanzados
+
 - **Eliminación inmediata** del cache
 - **Reversión automática** si falla
 - **QueryKeys específicos** para diferentes vistas
 - **Navegación optimista** sin esperar BD
 
 ##### 4. Animaciones y UX
+
 - **Framer Motion** para efectos profesionales
 - **Exit animations** con física natural
 - **Feedback visual** inmediato
 - **Estados de loading** granulares
 
 #### 📁 Archivos Modificados
+
 - `PreparationHistoryCard.tsx` - Iconos + animaciones
 - `CoffeeForm.tsx` - Botón eliminar café + lógica
 - `useCoffeePreparations.ts` - Hooks de eliminación
@@ -78,6 +85,7 @@
 - Arquitectura limpia sin imports directos
 
 #### 🏆 Logros Técnicos
+
 - **Hooks pattern** 100% respetado
 - **Eliminación optimista** funcionando
 - **Animaciones profesionales** implementadas
@@ -86,6 +94,7 @@
 - **Manejo de errores** robusto
 
 #### 🎨 Patrón UX Establecido
+
 ```
 ┌─────────────────────────────────────────┐
 │ ⭐⭐⭐⭐⭐ 5              📅 ✏️ 🗑️ │

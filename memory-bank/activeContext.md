@@ -194,6 +194,19 @@ Si no: Update solo datos → Redirect
 - **Animaciones:** Framer Motion con efecto de destrucción (300ms)
 - **UX:** Navegación inmediata al home, eliminación en background
 
+#### 6. Sistema de Animaciones Profesionales
+
+- **Librería:** Framer Motion integrada en toda la aplicación
+- **Páginas animadas:**
+  - **Login:** Fade in + slide up, logo con scale, mensajes animados
+  - **Home:** Stagger animation para cards con delays progresivos
+  - **New/Edit Coffee:** Slide in desde derecha con secuencia
+  - **New Process:** Slide in + transiciones entre tabs
+- **Componentes reutilizables:**
+  - `DeleteConfirmDialog` - Diálogo de confirmación unificado
+  - Animaciones de eliminación con `AnimatePresence`
+- **UX mejorada:** Transiciones fluidas, feedback visual, sensación moderna
+
 ### 🎯 Funcionalidad Recién Implementada
 
 #### Botones de Acción en Historial de Preparaciones
@@ -245,7 +258,13 @@ const deletePreparations = useDeletePreparationsByCoffeeId();
    - Implementar edición de preparaciones existentes
    - Formulario modal o página dedicada
 
-2. **Optimización de Imágenes**
+2. **Mejoras de Animaciones**
+
+   - Page transitions entre rutas
+   - Loading skeletons animados
+   - Micro-interacciones en botones
+
+3. **Optimización de Imágenes**
 
    - Implementar compresión antes del upload
    - Múltiples tamaños (thumbnails)

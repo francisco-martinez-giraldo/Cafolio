@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProcessStep1 } from "@/components/ProcessSteps/ProcessStep1";
 import { ProcessStep2 } from "@/components/ProcessSteps/ProcessStep2";
+import { motion } from "framer-motion";
 import { Coffee } from "@/types/api";
 
 interface ProcessStepData {
@@ -81,35 +82,64 @@ export default function NewProcessPage() {
   };
 
   return (
-    <>
-      <h1 className="text-2xl font-bold mb-6">Nueva Preparación</h1>
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
+      <motion.h1 
+        className="text-2xl font-bold mb-6"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+      >
+        Nueva Preparación
+      </motion.h1>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="step1">Preparación</TabsTrigger>
-          <TabsTrigger value="step2" disabled={!processData.method}>
-            Calificación
-          </TabsTrigger>
-        </TabsList>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.3 }}
+      >
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="step1">Preparación</TabsTrigger>
+            <TabsTrigger value="step2" disabled={!processData.method}>
+              Calificación
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="step1" className="mt-6">
-          <ProcessStep1
-            onComplete={handleStep1Complete}
-            selectedCoffee={selectedCoffee || undefined}
-            initialData={processData}
-          />
-        </TabsContent>
+          <TabsContent value="step1" className="mt-6">
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ProcessStep1
+                onComplete={handleStep1Complete}
+                selectedCoffee={selectedCoffee || undefined}
+                initialData={processData}
+              />
+            </motion.div>
+          </TabsContent>
 
-        <TabsContent value="step2" className="mt-6">
-          <ProcessStep2
-            onComplete={handleStep2Complete}
-            selectedCoffee={selectedCoffee || undefined}
-            isLoading={createPreparation.isPending}
-            initialData={processData}
-            onChange={handleStep2Change}
-          />
-        </TabsContent>
-      </Tabs>
-    </>
+          <TabsContent value="step2" className="mt-6">
+            <motion.div
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ProcessStep2
+                onComplete={handleStep2Complete}
+                selectedCoffee={selectedCoffee || undefined}
+                isLoading={createPreparation.isPending}
+                initialData={processData}
+                onChange={handleStep2Change}
+              />
+            </motion.div>
+          </TabsContent>
+        </Tabs>
+      </motion.div>
+    </motion.div>
   );
 }
