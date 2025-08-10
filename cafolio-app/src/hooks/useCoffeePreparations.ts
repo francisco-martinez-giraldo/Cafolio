@@ -74,6 +74,19 @@ export const useDeleteCoffeePreparation = () => {
   });
 };
 
+export const useDeletePreparationsByCoffeeId = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (coffeeId: string) => coffeePreparationsService.deleteByCoffeeId(coffeeId),
+    onSuccess: (_, coffeeId) => {
+      // Remover preparaciones del cache para evitar refetch
+      queryClient.removeQueries({ queryKey: ["preparation-history", coffeeId] });
+      queryClient.invalidateQueries({ queryKey: ["coffee-preparations"] });
+    },
+  });
+};
+
 // Export object for compatibility
 export const useCoffeePreparations = {
   getByUserId: useCoffeePreparationsByUserId,

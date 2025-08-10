@@ -11,8 +11,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { DictionarySelect } from "@/components/ui/DictionarySelect";
 import { Camera } from "lucide-react";
-import { useCreateCoffee, useUpdateCoffee, useCoffeeById } from "@/hooks/useCoffees";
+import {
+  useCreateCoffee,
+  useUpdateCoffee,
+  useCoffeeById,
+  useDeleteCoffee,
+} from "@/hooks/useCoffees";
 import { useUploadImage, useDeleteImage } from "@/hooks/useStorage";
+import { useDeletePreparationsByCoffeeId } from "@/hooks/useCoffeePreparations";
+import { DeleteConfirmDialog } from "@/components/ui/DeleteConfirmDialog";
+import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Form,
@@ -47,11 +55,14 @@ export function CoffeeForm() {
   const editId = searchParams.get("edit");
   const isEditing = !!editId;
 
-  const { data: existingCoffee } = useCoffeeById(editId || "");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { data: existingCoffee } = useCoffeeById(editId || "", !isDeleting);
   const createCoffee = useCreateCoffee();
   const updateCoffee = useUpdateCoffee();
   const uploadImage = useUploadImage();
   const deleteImage = useDeleteImage();
+  const deleteCoffee = useDeleteCoffee();
+  const deletePreparations = useDeletePreparationsByCoffeeId();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -141,7 +152,7 @@ export function CoffeeForm() {
               console.warn("Error deleting old image:", error);
             }
           }
-          
+
           const uploadResult = await uploadImage.mutateAsync({
             file: selectedFile,
             folder: "coffees",
@@ -164,20 +175,20 @@ export function CoffeeForm() {
       } else {
         // Para crear, usar FormData con imagen
         if (!selectedFile) {
-          console.error('No file selected');
+          console.error("No file selected");
           return;
         }
-        
+
         const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('brand_dictionary_id', data.brand);
-        formData.append('variety_dictionary_id', data.variety);
-        formData.append('process_dictionary_id', data.process);
-        formData.append('price', data.price.replace(/[^\d]/g, ""));
-        formData.append('region', data.region || "");
-        formData.append('farm', data.finca || "");
-        formData.append('notes', data.notes || "");
-        
+        formData.append("file", selectedFile);
+        formData.append("brand_dictionary_id", data.brand);
+        formData.append("variety_dictionary_id", data.variety);
+        formData.append("process_dictionary_id", data.process);
+        formData.append("price", data.price.replace(/[^\d]/g, ""));
+        formData.append("region", data.region || "");
+        formData.append("farm", data.finca || "");
+        formData.append("notes", data.notes || "");
+
         await createCoffee.mutateAsync(formData as unknown as CreateCoffeeRequest);
       }
 
@@ -187,210 +198,276 @@ export function CoffeeForm() {
     }
   };
 
+  const handleDeleteCoffee = async () => {
+    if (!editId || !existingCoffee) return;
+
+    setIsDeleting(true);
+
+    // Redirect inmediato después de animación (optimista)
+    setTimeout(() => {
+      router.push("/home");
+    }, 300);
+
+    try {
+      // Eliminar preparaciones primero
+      await deletePreparations.mutateAsync(editId);
+      
+      // Eliminar imagen del storage
+      if (existingCoffee.photo_path) {
+        await deleteImage.mutateAsync(existingCoffee.photo_path);
+      }
+
+      // Eliminar café (con eliminación optimista)
+      await deleteCoffee.mutateAsync(editId);
+    } catch (error) {
+      console.error("Error deleting coffee:", error);
+      // Si falla, el usuario ya está en home pero React Query revertirá los cambios
+    }
+  };
+
   return (
-    <Form {...form}>
-      <div className="space-y-6">
-        {/* Sección de foto */}
-        <FormField
-          control={form.control}
-          name="image"
-          render={({ fieldState }) => (
-            <FormItem>
-              <Card>
-                <CardContent className="p-2">
-                  <div
-                    onClick={handleImageClick}
-                    className={`flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
-                      fieldState.error
-                        ? "border-destructive hover:border-destructive/70"
-                        : "border-muted-foreground/25 hover:border-muted-foreground/50"
-                    }`}
-                  >
-                    {imagePreview ? (
-                      <Image
-                        width={100}
-                        height={100}
-                        src={imagePreview}
-                        alt="Preview"
-                        className="w-full h-full object-contain rounded-lg"
+    <motion.div
+      initial={{ opacity: 1, scale: 1 }}
+      animate={isDeleting ? { opacity: 0, scale: 0.8, y: -20 } : { opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+    >
+      <Form {...form}>
+        <div className="space-y-6">
+          {/* Sección de foto */}
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ fieldState }) => (
+              <FormItem>
+                <Card>
+                  <CardContent className="p-2">
+                    <div
+                      onClick={handleImageClick}
+                      className={`flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                        fieldState.error
+                          ? "border-destructive hover:border-destructive/70"
+                          : "border-muted-foreground/25 hover:border-muted-foreground/50"
+                      }`}
+                    >
+                      {imagePreview ? (
+                        <Image
+                          width={100}
+                          height={100}
+                          src={imagePreview}
+                          alt="Preview"
+                          className="w-full h-full object-contain rounded-lg"
+                        />
+                      ) : (
+                        <>
+                          <Camera className="h-8 w-8 text-muted-foreground mb-2" />
+                          <p className="text-sm text-muted-foreground">Agregar Foto</p>
+                        </>
+                      )}
+                    </div>
+                    <FormControl>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
                       />
-                    ) : (
-                      <>
-                        <Camera className="h-8 w-8 text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">Agregar Foto</p>
-                      </>
-                    )}
-                  </div>
+                    </FormControl>
+                  </CardContent>
+                </Card>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Formulario */}
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="brand"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Marca</FormLabel>
                   <FormControl>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="hidden"
+                    <DictionarySelect
+                      type="brand"
+                      label=""
+                      placeholder="Selecciona una marca"
+                      value={field.value}
+                      onValueChange={field.onChange}
                     />
                   </FormControl>
-                </CardContent>
-              </Card>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        {/* Formulario */}
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="brand"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Marca</FormLabel>
-                <FormControl>
-                  <DictionarySelect
-                    type="brand"
-                    label=""
-                    placeholder="Selecciona una marca"
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="variety"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Variedad</FormLabel>
+                  <FormControl>
+                    <DictionarySelect
+                      type="variety"
+                      label=""
+                      placeholder="Selecciona una variedad"
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="variety"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Variedad</FormLabel>
-                <FormControl>
-                  <DictionarySelect
-                    type="variety"
-                    label=""
-                    placeholder="Selecciona una variedad"
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="process"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Proceso</FormLabel>
+                  <FormControl>
+                    <DictionarySelect
+                      type="process"
+                      label=""
+                      placeholder="Selecciona un proceso"
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="process"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Proceso</FormLabel>
-                <FormControl>
-                  <DictionarySelect
-                    type="process"
-                    label=""
-                    placeholder="Selecciona un proceso"
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Precio</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="$0"
+                      value={field.value}
+                      onChange={(e) => handlePriceChange(e.target.value, field.onChange)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Precio</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="$0"
-                    value={field.value}
-                    onChange={(e) => handlePriceChange(e.target.value, field.onChange)}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="region"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Región</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="region"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Región</FormLabel>
-                <FormControl>
-                  <Input placeholder="" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="finca"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Finca / Productor</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="finca"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Finca / Productor</FormLabel>
-                <FormControl>
-                  <Input placeholder="" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Notas</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Perfil, Tostión, Notas, etc." rows={3} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="notes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Notas</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="Perfil, Tostión, Notas, etc." rows={3} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <div className="space-y-3 mt-6">
+              <Button
+                type="submit"
+                className="w-full cursor-pointer"
+                disabled={
+                  uploadImage.isPending ||
+                  createCoffee.isPending ||
+                  updateCoffee.isPending ||
+                  deleteImage.isPending
+                }
+              >
+                {deleteImage.isPending
+                  ? "Eliminando imagen anterior..."
+                  : uploadImage.isPending
+                  ? "Subiendo imagen..."
+                  : createCoffee.isPending || updateCoffee.isPending
+                  ? isEditing
+                    ? "Actualizando café..."
+                    : "Guardando café..."
+                  : isEditing
+                  ? "Actualizar Café"
+                  : "Guardar Café"}
+              </Button>
 
-          <Button
-            type="submit"
-            className="w-full mt-6 cursor-pointer"
-            disabled={uploadImage.isPending || createCoffee.isPending || updateCoffee.isPending || deleteImage.isPending}
-          >
-            {deleteImage.isPending
-              ? "Eliminando imagen anterior..."
-              : uploadImage.isPending
-              ? "Subiendo imagen..."
-              : createCoffee.isPending || updateCoffee.isPending
-              ? isEditing
-                ? "Actualizando café..."
-                : "Guardando café..."
-              : isEditing
-              ? "Actualizar Café"
-              : "Guardar Café"}
-          </Button>
-
-          {(uploadImage.error || createCoffee.error || updateCoffee.error || deleteImage.error) && (
-            <div className="text-sm text-destructive mt-2 text-center">
-              {deleteImage.error
-                ? "Error al eliminar imagen anterior. Continuando..."
-                : uploadImage.error
-                ? "Error al subir la imagen. Intenta nuevamente."
-                : createCoffee.error || updateCoffee.error
-                ? `Error al ${isEditing ? "actualizar" : "guardar"} el café. Intenta nuevamente.`
-                : ""}
+              {isEditing && (
+                <DeleteConfirmDialog
+                  trigger={
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      className="w-full cursor-pointer"
+                      disabled={isDeleting || deleteCoffee.isPending || deleteImage.isPending || deletePreparations.isPending}
+                    >
+                      {isDeleting || deleteCoffee.isPending || deleteImage.isPending || deletePreparations.isPending
+                        ? "Eliminando café..."
+                        : "Eliminar Café"}
+                    </Button>
+                  }
+                  title="Eliminar café"
+                  description="¿Estás seguro de que quieres eliminar este café? Esta acción eliminará también todas las preparaciones asociadas y no se puede deshacer."
+                  onConfirm={handleDeleteCoffee}
+                  isLoading={isDeleting || deleteCoffee.isPending || deleteImage.isPending || deletePreparations.isPending}
+                  confirmText="Eliminar"
+                  loadingText="Eliminando..."
+                />
+              )}
             </div>
-          )}
-        </form>
-      </div>
-    </Form>
+
+            {(uploadImage.error ||
+              createCoffee.error ||
+              updateCoffee.error ||
+              deleteImage.error) && (
+              <div className="text-sm text-destructive mt-2 text-center">
+                {deleteImage.error
+                  ? "Error al eliminar imagen anterior. Continuando..."
+                  : uploadImage.error
+                  ? "Error al subir la imagen. Intenta nuevamente."
+                  : createCoffee.error || updateCoffee.error
+                  ? `Error al ${isEditing ? "actualizar" : "guardar"} el café. Intenta nuevamente.`
+                  : ""}
+              </div>
+            )}
+          </form>
+        </div>
+      </Form>
+    </motion.div>
   );
 }

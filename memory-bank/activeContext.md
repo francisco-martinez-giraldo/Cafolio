@@ -34,6 +34,15 @@
 
 ### 🔧 Decisiones Técnicas Recientes
 
+#### 0. REGLA DE ORO: HOOKS OBLIGATORIOS
+
+- **NUNCA:** Importar servicios directamente en endpoints
+- **NUNCA:** Usar `await import()` para servicios
+- **SIEMPRE:** Crear hooks para cada operación
+- **SIEMPRE:** Usar hooks en componentes/páginas
+- **PATRÓN:** Frontend (hooks) → API (endpoints) → Servicios (datos)
+- **VIOLACIÓN:** Refactor inmediato sin excusas
+
 #### 1. Animaciones con Framer Motion
 
 - **Decisión:** Usar Framer Motion para animaciones profesionales
@@ -42,14 +51,17 @@
 - **Patrón:** Eliminar → Animación inmediata → Optimistic update → Reversión si falla
 - **Estado:** ✅ Implementado - Eliminación de preparaciones con efecto profesional
 
-#### 2. Patrón Obligatorio: React Query + Hooks
+#### 2. Patrón OBLIGATORIO: React Query + Hooks
 
 - **Decisión:** SIEMPRE usar React Query hooks para operaciones async
 - **Razón:** Consistencia, manejo de estados, cache automático, retry logic
 - **Patrón:** `useMutation` para operaciones, `useQuery` para consultas
 - **Implementación:** Todos los servicios deben tener su hook correspondiente
 - **Ejemplo:** `useDeleteImage()`, `useUploadImage()`, `useCreateCoffee()`
-- **Estado:** ✅ Patrón establecido - NO usar llamados directos a servicios
+- **PROHIBIDO:** Imports directos de servicios en endpoints o componentes
+- **PROHIBIDO:** `await import()` dinámicos en endpoints
+- **CORRECTO:** Usar hooks en frontend, servicios simples en backend
+- **Estado:** ✅ Patrón establecido - VIOLACIÓN = REFACTOR INMEDIATO
 
 #### 2. Campo photo_id en Tabla Coffees
 
@@ -171,6 +183,17 @@ Si no: Update solo datos → Redirect
   - `useDeleteCoffeePreparation` - Hook para eliminación
 - **UX:** Iconos de calendario (info), editar (placeholder), eliminar (funcional)
 
+#### 5. Sistema de Eliminación de Cafés
+
+- **Implementación:** Eliminación completa con cascada y optimistic updates
+- **Flujo:** Confirmar → Animar → Eliminar (preparaciones → imagen → café) → Redirect
+- **Hooks utilizados:**
+  - `useDeletePreparationsByCoffeeId` - Elimina preparaciones del café
+  - `useDeleteImage` - Elimina imagen del storage
+  - `useDeleteCoffee` - Elimina café con optimistic update
+- **Animaciones:** Framer Motion con efecto de destrucción (300ms)
+- **UX:** Navegación inmediata al home, eliminación en background
+
 ### 🎯 Funcionalidad Recién Implementada
 
 #### Botones de Acción en Historial de Preparaciones
@@ -191,6 +214,29 @@ Si no: Update solo datos → Redirect
   - **Physics:** Easing natural con `easeInOut`
   - **Layout:** Transiciones automáticas entre elementos
 - **UX:** Distribución que no interfiere con información principal
+
+### 🚨 REGLAS CRÍTICAS DEL PROYECTO
+
+#### HOOKS PATTERN - VIOLACIÓN = REFACTOR
+
+```typescript
+// ❌ PROHIBIDO - Import directo en endpoint
+import { CoffeeService } from '@/services/coffee-service';
+
+// ❌ PROHIBIDO - Import dinámico
+const { CoffeeService } = await import('@/services/coffee-service');
+
+// ✅ CORRECTO - Hook en frontend
+const deleteCoffee = useDeleteCoffee();
+const deletePreparations = useDeletePreparationsByCoffeeId();
+```
+
+#### ARQUITECTURA OBLIGATORIA
+
+- **Frontend:** Hooks + React Query
+- **API Endpoints:** Solo orquestación simple
+- **Servicios:** Solo operaciones de datos
+- **Lógica de negocio:** En hooks del frontend
 
 ### 📋 Próximas Tareas Identificadas
 

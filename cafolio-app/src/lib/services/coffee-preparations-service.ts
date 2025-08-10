@@ -82,6 +82,16 @@ export class CoffeePreparationsService {
     if (error) throw error;
   }
 
+  async deleteByCoffeeId(coffeeId: string, userId: string): Promise<void> {
+    const { error } = await supabase
+      .from("coffee_preparations")
+      .delete()
+      .eq("coffee_id", coffeeId)
+      .eq("user_id", userId);
+
+    if (error) throw error;
+  }
+
   async getHistoryByCoffeeId(coffeeId: string, userId: string): Promise<CoffeePreparation[]> {
     const { data, error } = await supabase
       .from("coffee_preparations")

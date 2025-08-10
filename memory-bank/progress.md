@@ -10,7 +10,7 @@
 - [] Agregar Iconos para algunos dictionary como Molienda y que se vea mas ordenado
 - ✅ En Coffee preparations history agregar un boton para elimnar (con dialogo de confirmación)
 - [] En Coffee preparations history agregar un boton para editar y poder editarlo
-- [] En Editar Coffee permitir eliminar un cafe, avisar que tiene x preparations que si esta seguro porque tambien se va borrar y borrar ambas cosas, incluyendo la imagen en el Storage
+- ✅ En Editar Coffee permitir eliminar un cafe, avisar que tiene x preparations que si esta seguro porque tambien se va borrar y borrar ambas cosas, incluyendo la imagen en el Storage
 - [] El Icono de la foto a la izq, ahora abre un menu con varias opciones
   - [] Editar Perfil
   - [] Cambiar Theme (System - Dark / Light)
@@ -20,49 +20,70 @@
 
 ## 📅 09 Enero 2025
 
-### 09 de Enero 2025 - ✅ BOTONES DE ACCIÓN EN HISTORIAL
+### 09 de Enero 2025 - ✅ SISTEMA DE ELIMINACIÓN COMPLETO
 
-#### 🎯 Funcionalidad Implementada
+#### 🎯 Funcionalidades Implementadas
 
-**Botones de Acción en PreparationHistoryCard:**
-- **📅 Calendario:** Tooltip con fecha completa de la preparación
-- **✏️ Editar:** Placeholder deshabilitado para futuro desarrollo
-- **🗑️ Eliminar:** Funcional con diálogo de confirmación
+**1. Botones de Acción en PreparationHistoryCard:**
+- **📅 Calendario:** Tooltip con fecha completa
+- **✏️ Editar:** Placeholder para futuro desarrollo
+- **🗑️ Eliminar:** Funcional con optimistic update
+
+**2. Eliminación de Cafés Completa:**
+- **Botón eliminar** en formulario de edición
+- **Diálogo de confirmación** con advertencia sobre preparaciones
+- **Eliminación en cascada:** Preparaciones → Imagen → Café
+- **Optimistic updates** para UX instantánea
+- **Animaciones profesionales** con Framer Motion
+- **Decisión técnica:** Mensaje genérico sobre preparaciones (no cantidad específica)
+  - **Razón:** Evitar llamado API adicional innecesario
+  - **UX:** Mensaje claro sin impacto en performance
 
 #### 🔧 Implementación Técnica
 
-##### 1. Componentes UI Utilizados
-- `AlertDialog` de Shadcn para confirmación de eliminación
-- `Tooltip` para información contextual en hover
-- `Button` con variantes ghost para iconos discretos
-- **Framer Motion** para animaciones profesionales
+##### 1. Hooks Pattern Reforzado
+- **🚨 REGLA CRÍTICA:** Solo hooks en frontend
+- **PROHIBIDO:** Imports directos de servicios en endpoints
+- **Hooks creados:**
+  - `useDeleteCoffeePreparation` - Eliminar preparación individual
+  - `useDeletePreparationsByCoffeeId` - Eliminar todas las preparaciones
+  - `useDeleteCoffee` - Eliminar café con optimistic update
+  - `useDeleteImage` - Eliminar imagen del storage
 
-##### 2. Hook de Eliminación Optimizado
-- `useDeleteCoffeePreparation` con **optimistic update**
-- **onMutate:** Eliminación inmediata de UI
-- **onError:** Reversión automática si falla
-- **onSuccess:** Invalidación de cache (historial + home)
-- Estados de loading con `isPending` nativo
+##### 2. Arquitectura Correcta Establecida
+- **Frontend:** Lógica de negocio con hooks
+- **API Endpoints:** Solo orquestación simple
+- **Servicios:** Solo operaciones atómicas de datos
+- **Separación clara:** Cada capa con su responsabilidad
 
-##### 3. Animaciones Profesionales
-- **Exit animation:** `opacity: 0, scale: 0.8, y: -20`
-- **Duración:** 300ms con `easeInOut`
-- **Layout:** Transiciones automáticas entre elementos
-- **AnimatePresence:** Detección automática de elementos eliminados
+##### 3. Optimistic Updates Avanzados
+- **Eliminación inmediata** del cache
+- **Reversión automática** si falla
+- **QueryKeys específicos** para diferentes vistas
+- **Navegación optimista** sin esperar BD
 
-##### 4. UX/UI Optimizada
-- Iconos posicionados en esquina superior derecha
-- No interfieren con información principal de la card
-- Hover states diferenciados (destructive para eliminar)
-- Feedback visual instantáneo con animaciones suaves
+##### 4. Animaciones y UX
+- **Framer Motion** para efectos profesionales
+- **Exit animations** con física natural
+- **Feedback visual** inmediato
+- **Estados de loading** granulares
 
 #### 📁 Archivos Modificados
-- `PreparationHistoryCard.tsx` - Iconos + Framer Motion
-- `history/[coffeeId]/page.tsx` - AnimatePresence wrapper
-- `useCoffeePreparations.ts` - Optimistic update
-- `package.json` - Framer Motion dependency
-- `activeContext.md` - Documentación actualizada
-- `progress.md` - Tarea completada
+- `PreparationHistoryCard.tsx` - Iconos + animaciones
+- `CoffeeForm.tsx` - Botón eliminar café + lógica
+- `useCoffeePreparations.ts` - Hooks de eliminación
+- `useCoffees.ts` - Optimistic update
+- `/api/coffees/[id]/preparations/route.ts` - Endpoint DELETE
+- `coffee-preparations.service.ts` - Método deleteByCoffeeId
+- Arquitectura limpia sin imports directos
+
+#### 🏆 Logros Técnicos
+- **Hooks pattern** 100% respetado
+- **Eliminación optimista** funcionando
+- **Animaciones profesionales** implementadas
+- **Arquitectura limpia** establecida
+- **UX fluida** sin esperas
+- **Manejo de errores** robusto
 
 #### 🎨 Patrón UX Establecido
 ```
@@ -274,4 +295,4 @@
 ---
 
 **Última actualización:** 09 de Enero 2025
-**Estado:** ✅ PROYECTO CORE COMPLETADO - Funcionalidad de eliminación en historial agregada
+**Estado:** ✅ SISTEMA DE ELIMINACIÓN COMPLETO - Hooks pattern reforzado y optimistic updates implementados

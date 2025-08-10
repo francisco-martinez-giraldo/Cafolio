@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { coffeesService } from "@/services";
-import { UpdateCoffeeRequest, CoffeeWithRating } from "@/types/api";
+import { UpdateCoffeeRequest, CoffeeWithRating, Coffee } from "@/types/api";
 
 export const useRecentCoffees = (limit?: number) => {
   return useQuery<CoffeeWithRating[]>({
@@ -9,11 +9,11 @@ export const useRecentCoffees = (limit?: number) => {
   });
 };
 
-export const useCoffeeById = (id: string) => {
+export const useCoffeeById = (id: string, enabled: boolean = true) => {
   return useQuery({
     queryKey: ["coffees", id],
     queryFn: () => coffeesService.getById(id),
-    enabled: !!id,
+    enabled: !!id && enabled,
   });
 };
 
@@ -54,8 +54,40 @@ export const useDeleteCoffee = () => {
 
   return useMutation({
     mutationFn: coffeesService.delete,
-    onSuccess: () => {
+    onMutate: async (coffeeId) => {
+      // Cancelar queries en progreso
+      await queryClient.cancelQueries({ queryKey: ["coffees", "recent"] });
+      await queryClient.cancelQueries({ queryKey: ["coffees"] });
+      
+      // Guardar datos previos
+      const previousRecent = queryClient.getQueryData(["coffees", "recent", 3]);
+      const previousAll = queryClient.getQueryData(["coffees"]);
+      
+      // Eliminar optimisticamente del cache (con limit específico)
+      queryClient.setQueryData(["coffees", "recent", 3], (old: CoffeeWithRating[]) => 
+        old?.filter(coffee => coffee.id !== coffeeId) || []
+      );
+      queryClient.setQueryData(["coffees"], (old: Coffee[]) => 
+        old?.filter(coffee => coffee.id !== coffeeId) || []
+      );
+      
+      return { previousRecent, previousAll };
+    },
+    onError: (err, coffeeId, context) => {
+      // Revertir cambios si falla
+      if (context?.previousRecent) {
+        queryClient.setQueryData(["coffees", "recent", 3], context.previousRecent);
+      }
+      if (context?.previousAll) {
+        queryClient.setQueryData(["coffees"], context.previousAll);
+      }
+    },
+    onSuccess: (_, coffeeId) => {
+      // Remover el café específico del cache
+      queryClient.removeQueries({ queryKey: ["coffees", coffeeId] });
       queryClient.invalidateQueries({ queryKey: ["coffees"] });
+      queryClient.invalidateQueries({ queryKey: ["coffees", "recent"] });
+      queryClient.invalidateQueries({ queryKey: ["coffee-preparations"] });
     },
   });
 };

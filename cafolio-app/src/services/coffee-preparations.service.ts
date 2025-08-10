@@ -27,6 +27,10 @@ export const coffeePreparationsService = {
     await apiClient.delete(`/api/coffees/${coffeeId}/preparations/${id}`);
   },
 
+  deleteByCoffeeId: async (coffeeId: string): Promise<void> => {
+    await apiClient.delete(`/api/coffees/${coffeeId}/preparations`);
+  },
+
   getHistoryByCoffeeId: async (coffeeId: string): Promise<CoffeePreparation[]> => {
     const { data } = await apiClient.get(`/api/coffee-preparations/history/${coffeeId}`);
     return data;

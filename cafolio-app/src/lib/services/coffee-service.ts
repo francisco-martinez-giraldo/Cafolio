@@ -70,7 +70,11 @@ export class CoffeeService {
   }
 
   async delete(id: string, userId: string): Promise<void> {
-    const { error } = await supabase.from("coffees").delete().eq("id", id).eq("user_id", userId);
+    const { error } = await supabase
+      .from("coffees")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", userId);
 
     if (error) throw error;
   }

@@ -59,7 +59,11 @@ export default function LoginPage() {
               </div>
             )}
 
-            <Button type="submit" className="w-full" disabled={!email || loginMutation.isPending}>
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={!email || loginMutation.isPending}
+            >
               {loginMutation.isPending ? "Enviando..." : "Ingresar"}
             </Button>
           </form>
